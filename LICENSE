@@ -1,0 +1,52 @@
+# 许可 · License
+
+本仓库**分开授权**——硬件设计与固件代码性质不同，适用不同的许可。
+
+| 范围 | 位置 | 许可 |
+|---|---|---|
+| **硬件设计**<br>工程图、尺寸表、结构分析、文档、渲染图 | `cad/`、`docs/` | **CC BY-NC-SA 4.0** |
+| **固件代码**<br>全部源代码 | `firmware/` | **MIT** |
+
+---
+
+## 硬件设计 —— CC BY-NC-SA 4.0
+
+**Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International**
+
+你可以自由地：
+
+- **共享** —— 以任何媒介或格式复制、发行本作品
+- **演绎** —— 修改、转换或以本作品为基础进行创作
+
+惟须遵守下列条件：
+
+- **署名** —— 必须给出适当的署名，提供指向本许可协议的链接，并说明是否作出了修改
+- **非商业性使用** —— 不得将本作品用于商业目的
+- **相同方式共享** —— 若再混合、转换或基于本作品创作，必须以相同的许可协议分发你的贡献
+
+许可协议全文（具有法律效力）：
+
+- 中文 —— https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.zh-hans
+- English —— https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.en
+
+> 选择 **NC（非商业性使用）** 是因为这是一个课程设计作品——别人可以照着做、可以改，但不能拿去卖。
+> 如需商业使用，请先联系作者。
+
+---
+
+## 固件代码 —— MIT
+
+完整文本见 [`LICENSE-CODE`](LICENSE-CODE)。
+
+---
+
+## 第三方说明
+
+本项目的形态语言与「行为可以被训练出来」这一概念，致敬
+[**MicroDuck**](https://github.com/pollen-robotics/microduck)（Hugging Face × Pollen Robotics，Apache-2.0）。
+
+**本仓库不包含 MicroDuck 的任何代码或资产**，仅作设计参考与致谢。所有 CAD、图纸、文档与固件均为原创。
+
+---
+
+Copyright (c) 2026 张子睿 (Zhang Zirui)

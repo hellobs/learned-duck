@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="aA7NrUZOw6PNqrjX1CUCFg">
+<head data-page-node-id="N4PkNvNMbCnXxni8zCKjJq">
+<meta charset="UTF-8" data-page-node-id="mDJZRACNKxbIVoNR7FCaEr">
+<meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="urdl5Nq9WpzXUiLokbp2kf">
+<title>内部堆叠与机构详图 · 智能蓝牙音箱（单喇叭版）</title>
+<style>
+  :root{
+    --bg:#F4F1EA; --card:#FFFFFF; --line:#E3DDD0;
+    --ink:#23262B; --ink3:#4A4A50; --gray:#8A8378; --gray2:#6B6862;
+    --orange:#F26B21; --orange-d:#8A3C12; --orange-l:#FBEDE1;
+    --shell:#F0E9DA; --cap:#F26B21;
+    --z-ac:#F8E2CE; --z-lit:#FBEFC6; --z-el:#E3E1F2; --z-cn:#DCE3E8; --z-ms:#D8D8DC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",Inter,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1460px;margin:0 auto;padding:0 60px 110px;}
+  header{padding:70px 0 38px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:15px;letter-spacing:.06em;color:var(--gray);margin:0 0 14px;}
+  h1{font-size:50px;line-height:1.18;margin:0 0 18px;font-weight:800;letter-spacing:-.01em;}
+  h1 em{font-style:normal;color:var(--orange);}
+  .lede{font-size:19px;color:var(--ink3);max-width:1000px;margin:0;}
+  .meta{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;}
+  .chip{font-size:14px;color:var(--gray2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 16px;}
+  .chip b{color:var(--ink);font-weight:600;}
+  section{padding-top:56px;}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px;}
+  .sec-no{font-family:Inter,sans-serif;font-size:15px;font-weight:700;color:#fff;background:var(--orange);border-radius:8px;padding:4px 11px;}
+  h2{font-size:30px;margin:0;font-weight:700;}
+  .sec-note{font-size:16px;color:var(--gray);margin:6px 0 24px;max-width:1060px;}
+  h3{font-size:20px;margin:0 0 10px;font-weight:700;}
+  figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;overflow:hidden;}
+  figure svg{width:100%;height:auto;display:block;}
+  figcaption{font-size:15px;color:var(--gray);margin-top:14px;}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--ink3);}
+  .legend span{display:flex;align-items:center;gap:8px;}
+  .sw{width:16px;height:16px;border-radius:4px;border:1px solid rgba(0,0,0,.12);}
+  table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;font-size:15.5px;}
+  th,td{padding:12px 16px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);}
+  th{background:#FAF8F3;font-size:14px;font-weight:700;color:var(--gray2);white-space:nowrap;}
+  tr:last-child td{border-bottom:none;}
+  td.v{font-family:Inter,sans-serif;font-weight:700;color:var(--orange);white-space:nowrap;}
+  code{font-family:Inter,ui-monospace,Menlo,Consolas,monospace;font-size:14px;background:#F5F2EB;border-radius:5px;padding:2px 6px;color:var(--orange-d);}
+  .grid{display:grid;gap:20px;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px 26px;}
+  .card p{margin:0 0 8px;font-size:16px;color:var(--ink3);}
+  .card p:last-child{margin-bottom:0;}
+  .warn{background:#FDEDE4;border:1px solid #F5C6AA;border-radius:16px;padding:22px 26px;}
+  .warn h3{color:#8A3C12;} .warn p{color:#7A4A2A;margin:0 0 8px;font-size:16px;}
+  .ok{background:#EFF4EC;border:1px solid #CFE0C6;border-radius:16px;padding:22px 26px;}
+  .ok h3{color:#3D5A2E;} .ok p{color:#42563A;margin:0 0 8px;font-size:16px;}
+  ol.steps{list-style:none;counter-reset:s;padding:0;margin:0;display:grid;gap:12px;}
+  ol.steps li{counter-increment:s;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px 18px 66px;position:relative;font-size:16px;color:var(--ink3);}
+  ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:20px;top:17px;font-family:Inter,sans-serif;font-weight:700;font-size:15px;color:var(--orange);}
+  ol.steps li b{color:var(--ink);font-weight:600;}
+  @media (max-width:1100px){.wrap{padding:0 26px 70px;}.g2,.g3{grid-template-columns:1fr;}h1{font-size:34px;}}
+</style>
+</head>
+<body data-page-node-id="q9EMzrBHlxWabdtwzWdK8I">
+<div class="wrap" data-page-node-id="WbgMWF50kaW4CDeu5ZBDoU">
+
+<header data-page-node-id="IvWTJIQefmm0YMCrawQLgg">
+  <p class="eyebrow" data-page-node-id="KDgq6y71yyzg7kBX87pnlK">智能蓝牙音箱 · 单喇叭版 · 内部堆叠与机构详图</p>
+  <h1 data-page-node-id="gjqzCwgj85vNQT92360Zp9">把工作量的<em data-page-node-id="pIvqbveBdxF6uvW9StFF4c">大头</em>先画掉</h1>
+  <p class="lede" data-page-node-id="KWwPYnvKEjI1bUMwi8OlRE">
+    指导老师认可方案、担心工作量大——那这份东西就针对那件事：<b data-page-node-id="d6e0E9QR5COGOp6LHI8gPn">把最容易返工的三块（内部堆叠、机构接口、打印件规格）全部前置定死</b>，
+    这样你在 SolidWorks 里只是照着摆、照着切，不用边做边想。
+    全部尺寸按画布定稿的基准值；标注 <b data-page-node-id="CcgsgsA6Y1rRU6EJUdAzDE">待实测</b> 的地方，等你卡尺量完替换即可，不影响结构。
+  </p>
+  <div class="meta" data-page-node-id="rQwouVSakRPfWD7Is4JBeD">
+    <span class="chip" data-page-node-id="te57hDdKzE4JX1Dm2la85k">头 <b data-page-node-id="6nsJMXLVxyjxAulTgbIuWs">96×102×62</b></span>
+    <span class="chip" data-page-node-id="2BVHZthJ6FiN7mqfXxmJnm">颈 <b data-page-node-id="zgOR0GZHRIbimPTjYZL7X9">26</b></span>
+    <span class="chip" data-page-node-id="iGsT7XOUBdr7JcJwCjmcAY">身 <b data-page-node-id="fkmIAOHsLROjBCPkA4iayq">76×52×64</b></span>
+    <span class="chip" data-page-node-id="TCijGwzHlEXTtEi0vrIoNa">腿 <b data-page-node-id="1wX1CEldjhkGm3K6zDreml">36</b></span>
+    <span class="chip" data-page-node-id="oOuqyDxi8UY2nXUKbGZSQV">总高 <b data-page-node-id="0YZhZY2xj1PASIWrDq1y9H">216</b></span>
+    <span class="chip" data-page-node-id="VHMupuLv7sXqp8ExfB7bR6">打印件 <b data-page-node-id="ELnwqp0ySq5HektzpGKsVA">约 13 件</b></span>
+  </div>
+</header>
+
+<!-- ============ 01 侧剖堆叠 ============ -->
+<section data-page-node-id="lKdNHeOfPSU7MXEedVdUMN">
+  <div class="sec-head" data-page-node-id="Xn1EyWOCbcHoZkKBnXubDB"><span class="sec-no" data-page-node-id="zPiOdfSnJj9XiYWfjpQjV9">01</span><h2 data-page-node-id="OwqxiQbDgLQlqYpHJyxqPD">侧剖堆叠图（2.4 px = 1 mm）</h2></div>
+  <p class="sec-note" data-page-node-id="Nt2hrcXTAiFzn0Uw8yWFRG">
+    这一张是整机唯一的「主参照」。头的内腔被一刀切成上下两段：<b data-page-node-id="yXysyeTCZtHYZrr9uTSkcM">上段是封死的声学腔，下段前侧是光腔口袋</b>，
+    声学腔做成 <b data-page-node-id="Mm4QmHDfbQbMIwuwIYIPWx">L 形</b>绕到光腔后面去——这是把容积从 0.25 L 抢回 0.40 L 的关键一步。
+  </p>
+
+  <figure data-page-node-id="U599gi6QtEbkUErobJ3RZ6">
+    <svg viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" data-page-node-id="4FQZJ785RE0liSJeeiNkpW">
+      <!-- 头 -->
+      <rect x="406" y="102" width="149" height="245" rx="30" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="BAZ33sXBCGF0NCQT9yWGlV"/>
+      <!-- 顶盖 -->
+      <path d="M406 145 Q406 102 444 102 L517 102 Q555 102 555 145 Z" fill="#F26B21" data-page-node-id="eWEtEIvFCZ8iD5lmHz0PPo"/>
+      <rect x="406" y="143" width="149" height="2" fill="#2B2E33" opacity="0.35" data-page-node-id="NGa9Ops19VVYX0vpGJfUBp"/>
+
+      <!-- 声学腔（L 形） -->
+      <path d="M412 108 L549 108 L549 341 L455 341 L455 240 L412 240 Z" fill="#F8E2CE" stroke="#D89A66" stroke-width="1.6" data-page-node-id="YaqAF2Q0p0upwyNm4mIHkJ"/>
+      <!-- 光腔 -->
+      <rect x="412" y="240" width="43" height="101" fill="#FBEFC6" stroke="#D9BE5E" stroke-width="1.6" data-page-node-id="hA6pEG1DoD21uSVCT2ANmt"/>
+      <rect x="416" y="248" width="8" height="85" rx="3" fill="#FFF3D0" data-page-node-id="GSyXwr7SAi1WCXptVP9wZS"/>
+      <!-- 隔板 -->
+      <rect x="412" y="234" width="137" height="7" fill="#C9B99A" data-page-node-id="HnzgcNoUo3UuVYYdXZ1WAm"/>
+
+      <!-- 喇叭（侧视：锥+磁钢） -->
+      <rect x="404" y="112" width="16" height="121" fill="#2B2E33" data-page-node-id="1KledkYtJH7BSJzVjsCW1c"/>
+      <rect x="420" y="116" width="68" height="113" rx="5" fill="#4A4E55" data-page-node-id="AalWbbFAqlPMyhboXj0yYl"/>
+      <circle cx="454" cy="172" r="26" fill="#3A3F47" data-page-node-id="4A40KHzmjHfGrIR87igTtp"/>
+      <rect x="404" y="98" width="6" height="149" fill="#DCD2B8" opacity="0.9" data-page-node-id="sOG9DQHqm18mMiLa1Bl1gP"/>
+
+      <!-- 喙 -->
+      <polygon points="406,326 382,330 382,347 406,343" fill="#F26B21" data-page-node-id="XRH8tzPA98Z0HTcHEOgpCv"/>
+      <rect x="382" y="335" width="8" height="7" fill="#FFB865" data-page-node-id="VmzukPFd7aOp3XFl3OISTE"/>
+
+      <!-- 颈 -->
+      <rect x="432" y="347" width="96" height="62" fill="#DCE3E8" stroke="#2B2E33" stroke-width="2" data-page-node-id="jBk1IAnkJK6Al3zLEfmgCf"/>
+      <rect x="444" y="349" width="9" height="58" fill="#6E7380" data-page-node-id="vQ4Yui9yITkYPr4vrQO7Wi"/>
+      <rect x="507" y="349" width="9" height="58" fill="#6E7380" data-page-node-id="svBffW5SgHdqWvWMXBTwIt"/>
+      <path d="M462 352 q14 26 0 52" fill="none" stroke="#8A8378" stroke-width="2" stroke-dasharray="4 4" data-page-node-id="jYTfBeSJ3SqHdXl9p6B1ZM"/>
+
+      <!-- 身 -->
+      <rect x="403" y="409" width="154" height="125" rx="28" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="3gOPMv83ghQ7VSpBkJWVq7"/>
+      <rect x="409" y="415" width="142" height="113" rx="24" fill="#E3E1F2" data-page-node-id="vjCFZPAhceiOS2icjZJpUI"/>
+      <!-- 配重兼散热钢板 -->
+      <rect x="431" y="509" width="96" height="19" rx="3" fill="#B9BCC4" stroke="#6E7380" stroke-width="1.4" data-page-node-id="Rgeq67JWFbr6IlZeGjBZf2"/>
+      <!-- 功放板 -->
+      <rect x="428" y="492" width="72" height="17" rx="3" fill="#F26B21" data-page-node-id="bgAWh7eMI5hf7NaOs2Rt6j"/>
+      <!-- 降压 -->
+      <rect x="428" y="474" width="62" height="14" rx="3" fill="#C8C2E8" stroke="#8A83B8" stroke-width="1.2" data-page-node-id="qZKHV9RGZiJAhx1aDiK7JH"/>
+      <!-- ESP32 -->
+      <rect x="528" y="432" width="22" height="56" rx="3" fill="#2E3138" data-page-node-id="Lz462UQCUZzbsmMh3n66P6"/>
+      <!-- 天线净空 -->
+      <rect x="524" y="416" width="30" height="12" rx="4" fill="none" stroke="#F26B21" stroke-width="1.3" stroke-dasharray="4 3" data-page-node-id="jTf8RnkcLFXyXrbFGjzUje"/>
+      <!-- 开关 -->
+      <rect x="396" y="440" width="12" height="26" rx="3" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="37EyEPE6dM4rRay1qX3b4A"/>
+      <!-- 按钮 -->
+      <circle cx="555" cy="432" r="9" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="YXI23NgPjogXNiqvm98KBZ"/>
+      <!-- DC 座 -->
+      <rect x="550" y="478" width="14" height="22" rx="3" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="07aV42yFi7UK7oIfIDdr08"/>
+
+      <!-- 腿 -->
+      <rect x="396" y="484" width="26" height="50" rx="9" fill="#23262B" data-page-node-id="rIH0PRjHWM3qYWvFeP2y4t"/>
+      <rect x="538" y="484" width="26" height="50" rx="9" fill="#2E3138" data-page-node-id="p860bN4La9jIGHjWQ5iIHG"/>
+      <polygon points="404,528 430,528 380,600 354,600" fill="#23262B" data-page-node-id="Yer3LV6uAgEAlhMnwStArr"/>
+      <circle cx="367" cy="562" r="10" fill="#3A3E44" stroke="#15171C" stroke-width="1.5" data-page-node-id="oohLk0OF5C3F3g76vqSyhj"/>
+      <rect x="307" y="594" width="77" height="26" rx="10" fill="#F26B21" data-page-node-id="5qw7O9MbD6VftUuDKfqVWE"/>
+      <polygon points="536,528 562,528 614,600 588,600" fill="#2E3138" data-page-node-id="HvnyT7SBIivDpYKk2ezw1w"/>
+      <circle cx="601" cy="562" r="10" fill="#3A3E44" stroke="#15171C" stroke-width="1.5" data-page-node-id="o8pRviFz6PuOKMCeWQFxSH"/>
+      <rect x="575" y="594" width="77" height="26" rx="10" fill="#C85A1C" data-page-node-id="cSZ2EsgFP7F2qpKh4wHG4S"/>
+
+      <!-- 地面 -->
+      <rect x="240" y="619" width="620" height="3" fill="#23262B" data-page-node-id="4mFDNW2mDFW1Dvf8RhwfBY"/>
+
+      <!-- 总高 -->
+      <rect x="150" y="102" width="2.4" height="517" fill="#8A8378" data-page-node-id="MKMfNSzXDwuW2llRE6QgGv"/>
+      <rect x="141" y="101" width="20" height="2.4" fill="#8A8378" data-page-node-id="7Sgz8adfPs7eKEZISCliRs"/>
+      <rect x="141" y="618" width="20" height="2.4" fill="#8A8378" data-page-node-id="UNp99SupOtGGNv5jg0azhW"/>
+      <text x="134" y="366" font-family="Noto Sans SC" font-size="21" fill="#6B6862" text-anchor="end" data-page-node-id="XNS6kiPQpz2TU4ge1d4szY">总高 216</text>
+
+      <!-- 头深 -->
+      <rect x="406" y="66" width="149" height="2.4" fill="#8A8378" data-page-node-id="MNxN3miu4shSYFjJ1xPOGu"/>
+      <rect x="405" y="56" width="2.4" height="22" fill="#8A8378" data-page-node-id="pLC4AhjykY5IUGv5D1DhHq"/>
+      <rect x="553" y="56" width="2.4" height="22" fill="#8A8378" data-page-node-id="uLkdsmrAw7oW1A40M4nMfk"/>
+      <text x="480" y="50" font-family="Noto Sans SC" font-size="21" fill="#6B6862" text-anchor="middle" data-page-node-id="k9w8jNaBDwHWkvU8zerbps">头深 62</text>
+
+      <!-- 高度链 -->
+      <rect x="880" y="102" width="2.4" height="517" fill="#8A8378" data-page-node-id="u6lTGANsdnOtbcK7EinIbT"/>
+      <rect x="871" y="101" width="20" height="2.4" fill="#8A8378" data-page-node-id="g4Av99fmO3EgJrqYjGl3vZ"/>
+      <rect x="871" y="346" width="20" height="2.4" fill="#8A8378" data-page-node-id="atHq5lfW4MsoVLYorZpHeJ"/>
+      <rect x="871" y="408" width="20" height="2.4" fill="#8A8378" data-page-node-id="mYgzDrCOcYPrNkQw9WVAMp"/>
+      <rect x="871" y="533" width="20" height="2.4" fill="#8A8378" data-page-node-id="0aFldYazQZey7qHqRxTym3"/>
+      <rect x="871" y="618" width="20" height="2.4" fill="#8A8378" data-page-node-id="1XD5fpDIGQq976CG4VYRun"/>
+      <text x="906" y="228" font-family="Noto Sans SC" font-size="21" fill="#6B6862" data-page-node-id="6fXAlBklP8rONlcf4eBFqh">头 102</text>
+      <text x="906" y="382" font-family="Noto Sans SC" font-size="21" fill="#6B6862" data-page-node-id="bmL2XFUj8doZqEY0fVUV52">颈 26</text>
+      <text x="906" y="474" font-family="Noto Sans SC" font-size="21" fill="#6B6862" data-page-node-id="sLlRDLw3PBxXHcQmJJ2lME">身 52</text>
+      <text x="906" y="578" font-family="Noto Sans SC" font-size="21" fill="#6B6862" data-page-node-id="9DjeeNmeILhvKBANmojXqq">腿 36</text>
+
+      <!-- 腔体标注 -->
+      <path d="M470 150 L620 150" fill="none" stroke="#D89A66" stroke-width="1.5" data-page-node-id="xWLeB6XP5APghqiEBSLUxZ"/>
+      <text x="628" y="146" font-family="Noto Sans SC" font-size="19" font-weight="600" fill="#8A3C12" data-page-node-id="rhFOnpv5BjZe2avweE2YMs">声学腔（L 形）净 ≈0.40 L</text>
+      <text x="628" y="172" font-family="Noto Sans SC" font-size="17" fill="#A8562D" data-page-node-id="xBeFgEDPJaRrV5rcq7QDMH">上段 91×52.5×57 ＋ 下段后侧 91×42×39</text>
+      <path d="M470 290 L620 290" fill="none" stroke="#D9BE5E" stroke-width="1.5" data-page-node-id="3exMhNYmpYWsA3Nc44cyXh"/>
+      <text x="628" y="286" font-family="Noto Sans SC" font-size="19" font-weight="600" fill="#7A5A0A" data-page-node-id="NycjTcNvNMWH9DSptODTQE">光腔 84×42×18（贴前缘浅口袋）</text>
+      <text x="628" y="312" font-family="Noto Sans SC" font-size="17" fill="#7A5A0A" data-page-node-id="jDAxNVm6XZ1PizwtFFbrR5">内壁喷白；出光口 70×6，加 2mm 扩散板</text>
+      <path d="M610 350 L620 350" fill="none" stroke="#6E93A3" stroke-width="1.5" data-page-node-id="27UtForlWiGGz7LkPZET3C"/>
+      <text x="628" y="356" font-family="Noto Sans SC" font-size="19" font-weight="600" fill="#2C4750" data-page-node-id="m2YHJNLblIqTPOgtUX72ST">颈：2×M4 螺纹杆 ＋ 走线束</text>
+      <text x="628" y="382" font-family="Noto Sans SC" font-size="17" fill="#2C4750" data-page-node-id="pi1JBrgIhOJnhdHyWXu1Sp">喇叭线 / 灯线 / 地线 全部走这里</text>
+      <path d="M600 470 L620 470" fill="none" stroke="#7B72B8" stroke-width="1.5" data-page-node-id="1i3SJ332NC9ZuVj60v6ffH"/>
+      <text x="628" y="466" font-family="Noto Sans SC" font-size="19" font-weight="600" fill="#3B3466" data-page-node-id="aGu5lc29icOsEvSW2r505v">电路腔 71×47×59（净 0.20 L）</text>
+      <text x="628" y="492" font-family="Noto Sans SC" font-size="17" fill="#3B3466" data-page-node-id="cQ23wq8KFF4jet884F5oqP">功放板坐钢板，ESP32 贴后壁立装，天线朝外</text>
+
+      <!-- 说明 -->
+      <text x="60" y="666" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="EjZAHUcDdp22ykd6outHch">喇叭安装：正面内凸一圈高 3.5 的圆环凸台（Ø58／Ø45），与壳壁 2.5 共同凑出深 6 的沉台 —— 否则 2.5 的壳壁做不出沉台。</text>
+    </svg>
+    <figcaption data-page-node-id="BSDd2jGImdoB5Ajhpk5dmQ">侧剖堆叠图 · 2.4 px = 1 mm。头腔内壁按 2.5 计；声学腔做成 L 形绕过光腔，是全机容积最划算的一步。</figcaption>
+    <div class="legend" data-page-node-id="XKwnDVQI39JrzYLuBlirsw">
+      <span data-page-node-id="9sOZ3f1jLLTq8sNQVsG4sO"><i class="sw" style="background:#F8E2CE" data-page-node-id="9CvEnz4mrhhG1qqytD9hQX"></i>声学腔</span>
+      <span data-page-node-id="LOXVcM157O1085sub7OPdP"><i class="sw" style="background:#FBEFC6" data-page-node-id="jHj2tALHniSzmlVSlJ3vcG"></i>光腔</span>
+      <span data-page-node-id="DCs7048ZDfxVbhHhjQGnix"><i class="sw" style="background:#DCE3E8" data-page-node-id="T97e8s08YAnLCMZXgyV5tn"></i>走线 / 结构</span>
+      <span data-page-node-id="zknKY5LJVE4growJo1eFfd"><i class="sw" style="background:#E3E1F2" data-page-node-id="oF3aeq6amqCUeUfGYRDELh"></i>电路腔</span>
+      <span data-page-node-id="r7VYUSCZucsTgC2eKJbFhN"><i class="sw" style="background:#B9BCC4" data-page-node-id="ySOGkiemfCHuBE0FCxAEv7"></i>配重兼散热</span>
+    </div>
+  </figure>
+</section>
+
+<!-- ============ 02 水平剖 ============ -->
+<section data-page-node-id="UfV39lylMDtPVFzg93vdwZ">
+  <div class="sec-head" data-page-node-id="NYmGRc5Dy5qcyi3NMZ5mKd"><span class="sec-no" data-page-node-id="8el7sCUEXqsmUoIb6Za6q3">02</span><h2 data-page-node-id="zeTh8YxmrHaKG73GZ5KRiJ">水平剖：头怎么布、身怎么布</h2></div>
+  <p class="sec-note" data-page-node-id="5AQ2pjnR9G3KbaSDHMKLdT">侧剖解决「高度」，水平剖解决「平面」。这两张图定完，内部就没有需要临场决定的事了。</p>
+
+  <div class="grid g2" data-page-node-id="dAJJ7BLvw9IZUPVsRK9TeU">
+    <figure data-page-node-id="Q2U7sn2XIDTIk7KaQDBo2H">
+      <svg viewBox="0 0 620 520" xmlns="http://www.w3.org/2000/svg" data-page-node-id="UF6uSG5fA2PbW8KJcN6h4z">
+        <text x="30" y="34" font-family="Noto Sans SC" font-size="20" font-weight="700" fill="#23262B" data-page-node-id="yp8YQN8ME6URRSu0gFpXNa">头部水平剖（切在喇叭轴线）</text>
+        <!-- 外壳 -->
+        <rect x="150" y="80" width="230" height="149" rx="24" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="K5smFuzy7ho1LBmwa1J9vo"/>
+        <!-- 内腔 -->
+        <rect x="156" y="86" width="218" height="137" rx="20" fill="#F8E2CE" stroke="#D89A66" stroke-width="1.6" data-page-node-id="3nuwHqsYrXQY8MlDZOPJfp"/>
+        <!-- 喇叭 -->
+        <circle cx="250" cy="155" r="62" fill="#DCD2B8" stroke="#2B2E33" stroke-width="2" data-page-node-id="DUsx4R0ACpFNg0Rz4fw7Ly"/>
+        <circle cx="250" cy="155" r="55" fill="#232B33" data-page-node-id="6scAK7UKIR0oSEApCoNKyD"/>
+        <circle cx="250" cy="155" r="33" fill="#1A1C20" data-page-node-id="S0RhlkNdZNXdPFPWO7aGB7"/>
+        <circle cx="250" cy="155" r="13" fill="#4A4E55" data-page-node-id="BhAYg3gDp8CPfidFFuVLXH"/>
+        <!-- 走线孔 -->
+        <circle cx="360" cy="155" r="11" fill="#DCE3E8" stroke="#6E7380" stroke-width="1.6" data-page-node-id="nxwHJfWg9zpBq2L5wp0808"/>
+        <!-- 尺寸 -->
+        <rect x="150" y="46" width="230" height="2.4" fill="#8A8378" data-page-node-id="woj9M2xhOeKkbbxCw3cusE"/>
+        <rect x="149" y="36" width="2.4" height="22" fill="#8A8378" data-page-node-id="oGvpd9ZmQxBJB8E7pGbosU"/>
+        <rect x="378" y="36" width="2.4" height="22" fill="#8A8378" data-page-node-id="tq878YnKeqZ9118YEudiKM"/>
+        <text x="265" y="30" font-family="Noto Sans SC" font-size="18" fill="#6B6862" text-anchor="middle" data-page-node-id="NEXCVatdFiTlrnqDy0mXo5">头宽 96（内 91）</text>
+        <rect x="406" y="80" width="2.4" height="149" fill="#8A8378" data-page-node-id="rIqUfXe4GX3svyjMThprVd"/>
+        <rect x="396" y="80" width="22" height="2.4" fill="#8A8378" data-page-node-id="QevRc3AaqlhPzSkDyCLNW4"/>
+        <rect x="396" y="226.6" width="22" height="2.4" fill="#8A8378" data-page-node-id="7sQBUmMphux07PCVq42tD9"/>
+        <text x="428" y="160" font-family="Noto Sans SC" font-size="18" fill="#6B6862" data-page-node-id="oogp0vM86i6NERqXLjCPjk">头深 62（内 57）</text>
+        <rect x="188" y="252" width="124" height="2.4" fill="#8A8378" data-page-node-id="MI38Ra9WRMEyupqiHN72tU"/>
+        <rect x="187" y="244" width="2.4" height="19" fill="#8A8378" data-page-node-id="XCpUJdZ06Y2zmAN71FmjmD"/>
+        <rect x="310" y="244" width="2.4" height="19" fill="#8A8378" data-page-node-id="8rqgI2ybEschFWGsCB0Rsb"/>
+        <text x="250" y="278" font-family="Noto Sans SC" font-size="18" fill="#6B6862" text-anchor="middle" data-page-node-id="46K4FjlahNi7EwJYoFk1ED">喇叭 Ø52</text>
+
+        <rect x="36" y="318" width="2.4" height="76" fill="#DCD6C9" data-page-node-id="9yY6AigWCMjYvVvgEdLQDY"/>
+        <text x="52" y="330" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="KUOqgHgamJGaU3hRSdb82s">头部只有一个器件：喇叭。</text>
+        <text x="52" y="356" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="bCriARvDKIsNUXo50xk5aL">灯板不在这里 —— 它在头腔下部的光腔里，</text>
+        <text x="52" y="382" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="AB0mwzNKELTvduchGNlVFa">这一层剖不到。这也是头能收窄的原因。</text>
+        <text x="36" y="428" font-family="Noto Sans SC" font-size="17" fill="#8A3C12" data-page-node-id="d853qzA7RFIn0x9xiDdgGH">走线孔 Ø10 开在后方偏右，喇叭线从声学腔引出后</text>
+        <text x="36" y="454" font-family="Noto Sans SC" font-size="17" fill="#8A3C12" data-page-node-id="T2NygxcRd4xXJzGvBitWg9">必须用硅胶封死 —— 这是声学腔唯一的开口。</text>
+        <text x="36" y="498" font-family="Noto Sans SC" font-size="15" fill="#8A8378" data-page-node-id="ZeYIKqHT2fxzi7WF9kNAMy">2.4 px = 1 mm</text>
+      </svg>
+      <figcaption data-page-node-id="NLGqWLDlVM2vjnswDM7Q4t">头部水平剖 · 切口在喇叭轴线高度。</figcaption>
+    </figure>
+
+    <figure data-page-node-id="ihggC9UU3cP2VmNQfxODxz">
+      <svg viewBox="0 0 620 520" xmlns="http://www.w3.org/2000/svg" data-page-node-id="zTf9fPWVoTOPNBjkCDB1S9">
+        <text x="30" y="34" font-family="Noto Sans SC" font-size="20" font-weight="700" fill="#23262B" data-page-node-id="edr4qyj9EeGVqhN9EUpak4">身部水平剖（取中段）</text>
+        <rect x="120" y="72" width="190" height="146" rx="24" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="1kjLYiSm8VgZAAXOt9uDDK"/>
+        <rect x="126" y="78" width="178" height="134" rx="18" fill="#E3E1F2" stroke="#7B72B8" stroke-width="1.6" data-page-node-id="aXrv2p73Sj16iCCW391smB"/>
+        <!-- 功放板 -->
+        <rect x="136" y="112" width="79" height="72" rx="4" fill="#F26B21" data-page-node-id="srooSNA4P33ch2aCk4lSCB"/>
+        <text x="144" y="152" font-family="Noto Sans SC" font-size="16" fill="#FFFFFF" data-page-node-id="tpFQscd8rtyVH3rRZqi5F1">功放板</text>
+        <text x="144" y="174" font-family="Noto Sans SC" font-size="14" fill="#FFE0CC" data-page-node-id="Tdx1vMuHP9iBZ8detSOFI0">33×30</text>
+        <!-- 降压 -->
+        <rect x="222" y="112" width="62" height="41" rx="4" fill="#C8C2E8" stroke="#8A83B8" stroke-width="1.2" data-page-node-id="SlHADDafj3BqRCEuq8rYDF"/>
+        <text x="228" y="138" font-family="Noto Sans SC" font-size="15" fill="#3B3466" data-page-node-id="AFCeCgpW3n5HXtWPpMBlRg">降压</text>
+        <!-- ESP32 -->
+        <rect x="222" y="160" width="43" height="46" rx="4" fill="#2E3138" data-page-node-id="ZNHvbjbNZiKAjHZpOs6Ocw"/>
+        <text x="226" y="188" font-family="Noto Sans SC" font-size="14" fill="#EFE3C8" data-page-node-id="FKPXuznGhXFC3iiz5UiJcl">ESP32</text>
+        <!-- 配重钢板（下层，虚线） -->
+        <rect x="138" y="94" width="144" height="96" rx="4" fill="none" stroke="#6E7380" stroke-width="1.6" stroke-dasharray="6 5" data-page-node-id="lozukZdBpwRPfktEBUxVGQ"/>
+        <text x="242" y="108" font-family="Noto Sans SC" font-size="14" fill="#5A5E66" data-page-node-id="3gzHBKWHqRuvE7tGcEIfMW">钢板 60×40（下层）</text>
+        <!-- 开关 / 按钮 / DC -->
+        <rect x="112" y="118" width="13" height="26" rx="3" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="9c9rzgjlLRvEHkssFhIQxY"/>
+        <circle cx="312" cy="118" r="10" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="QsIFlYnhjl7k1oQBBioJCN"/>
+        <rect x="304" y="160" width="14" height="22" rx="3" fill="#FFFFFF" stroke="#2B2E33" stroke-width="1.6" data-page-node-id="siwGAaSu0FyhXkCnKAJ5il"/>
+
+        <rect x="120" y="40" width="190" height="2.4" fill="#8A8378" data-page-node-id="ZtDHbD0tZZdUPtBwKJP0Ok"/>
+        <rect x="119" y="30" width="2.4" height="22" fill="#8A8378" data-page-node-id="HAmdKPjNpRQnYvJw5c1YoS"/>
+        <rect x="308" y="30" width="2.4" height="22" fill="#8A8378" data-page-node-id="a7gRDcPzgNNW8NHloWktCC"/>
+        <text x="215" y="26" font-family="Noto Sans SC" font-size="18" fill="#6B6862" text-anchor="middle" data-page-node-id="7aGYeRotqKNeHDdl5EPzMx">身宽 76（内 71）</text>
+        <rect x="336" y="72" width="2.4" height="146" fill="#8A8378" data-page-node-id="yOXpxc6cHLtx9ZQyNvwTp7"/>
+        <rect x="326" y="72" width="22" height="2.4" fill="#8A8378" data-page-node-id="ogR8swDVwbCQrSntOxS1Q3"/>
+        <rect x="326" y="215.6" width="22" height="2.4" fill="#8A8378" data-page-node-id="ErCmU2CikYAdEcJrJzaDoB"/>
+        <text x="358" y="148" font-family="Noto Sans SC" font-size="18" fill="#6B6862" data-page-node-id="LiUeisWc6LHalWOhBntAVU">身深 64（内 59）</text>
+
+        <rect x="36" y="300" width="2.4" height="120" fill="#DCD6C9" data-page-node-id="OAd3TgAKuHF4JgASjBWhpq"/>
+        <text x="52" y="312" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="idRNsgbUKjHvlKEF47GtPs">内腔 71×47×59，容积只有 0.20 L。</text>
+        <text x="52" y="338" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="gSs6ZxnvqOL7BKiSoOXgb5">钢板 60×40 贴底 → 功放板坐在钢板上 →</text>
+        <text x="52" y="364" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="G5AEcEq73EWnavL2HUWjH7">降压与 ESP32 分列右后；ESP32 的天线端朝右壁外，</text>
+        <text x="52" y="390" font-family="Noto Sans SC" font-size="17" fill="#6B6862" data-page-node-id="YUsCHGshTvxt2vkkfFaci9">10mm 内不得有金属与壳壁。</text>
+        <text x="36" y="436" font-family="Noto Sans SC" font-size="17" fill="#8A3C12" data-page-node-id="pxeORDuOwCE4Oqz4roFzEy">⚠ 内腔很紧。若功放板实际长度是 66（待实测），</text>
+        <text x="36" y="462" font-family="Noto Sans SC" font-size="17" fill="#8A3C12" data-page-node-id="8HRA507Dl2hHkPP1rtyc66">就必须斜放或把身宽加到 84。</text>
+        <text x="36" y="500" font-family="Noto Sans SC" font-size="15" fill="#8A8378" data-page-node-id="L4CqVcptCmS6trPrSDRtNP">2.4 px = 1 mm</text>
+      </svg>
+      <figcaption data-page-node-id="l2BmsAwDWMae3Z5k44anMG">身部水平剖 · 元件平面布置。虚线框是下层钢板位置。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 03 机构详图 ============ -->
+<section data-page-node-id="GlU7xoEgN6EVdDZ73d3bq4">
+  <div class="sec-head" data-page-node-id="mMMxWH3W4HjmumVpn4o7uc"><span class="sec-no" data-page-node-id="NB54RHVIDzY8OrPmB23YhE">03</span><h2 data-page-node-id="EoNk8Y3AslahDYWlib4WEl">机构详图：8 个关节怎么造成</h2></div>
+  <p class="sec-note" data-page-node-id="wKHfXFMmnYAPY28UuZYyfA">
+    这是全机工作量的<b data-page-node-id="MQqpcSa4bOakwHJAadW0DT">真正大头</b>——4 条腿 × 2 个关节。定死这三张剖面，腿就只剩「照着画 + 照着实测孔径改数」。
+    推荐用<b data-page-node-id="HEhLp3gYdFXSfUZPqi8KIT">定位齿盘</b>而非纯摩擦铰链：音箱会振，纯摩擦会慢慢跑角，而齿盘咬住就不会。
+  </p>
+
+  <div class="grid g3" data-page-node-id="U2BB0oQcW3EEbLXFX1Ivgt">
+    <figure data-page-node-id="3IzY12nDIS87m2eyqb6dwg">
+      <svg viewBox="0 0 460 400" xmlns="http://www.w3.org/2000/svg" data-page-node-id="XgLkQnonCJEWlP1DoTBS4e">
+        <text x="20" y="28" font-family="Noto Sans SC" font-size="18" font-weight="700" fill="#23262B" data-page-node-id="HAtL3iEdxcIA6sKYmm4lZh">A · 关节剖面（齿盘）</text>
+        <!-- 左板：支架 -->
+        <rect x="40" y="90" width="80" height="200" rx="10" fill="#2E3138" data-page-node-id="5N3N72mylb5BmlDegtMxJH"/>
+        <text x="46" y="316" font-family="Noto Sans SC" font-size="15" fill="#6B6862" data-page-node-id="usOP8tISJiQ95JbR77noRt">支架</text>
+        <!-- 齿盘 A -->
+        <rect x="120" y="140" width="34" height="100" fill="#4A4E55" data-page-node-id="kKrBK1V7RHjK58IGu51mIM"/>
+        <polygon points="154,150 176,158 154,166" fill="#4A4E55" data-page-node-id="mdRQZsY3fDVMbpKYKHAbKY"/>
+        <polygon points="154,174 176,182 154,190" fill="#4A4E55" data-page-node-id="zEH1bcTm8oWlkU8EGuFJQ6"/>
+        <polygon points="154,198 176,206 154,214" fill="#4A4E55" data-page-node-id="DSokLax0u5z8A3RgWtCbHP"/>
+        <polygon points="154,222 176,230 154,238" fill="#4A4E55" data-page-node-id="qdZ5NkhYLymGuWAuDmDXnz"/>
+        <!-- 齿盘 B -->
+        <rect x="190" y="140" width="34" height="100" fill="#3A3F47" data-page-node-id="AbKmjMHjmbNjAxBictJSco"/>
+        <polygon points="190,166 168,174 190,182" fill="#3A3F47" data-page-node-id="7iC2GLel3wX4f3MnF3Awog"/>
+        <polygon points="190,190 168,198 190,206" fill="#3A3F47" data-page-node-id="5ceQ47a2v2bybhUR7dZUKz"/>
+        <polygon points="190,214 168,222 190,230" fill="#3A3F47" data-page-node-id="brnI9DazauIE8I0Hu9QcTh"/>
+        <!-- 腿根 -->
+        <rect x="224" y="90" width="86" height="200" rx="10" fill="#23262B" data-page-node-id="nNuDyBuLKcuOsFFR9ezbyy"/>
+        <text x="236" y="316" font-family="Noto Sans SC" font-size="15" fill="#6B6862" data-page-node-id="OUYk0uTCwZ4rAyY1MC7iH3">腿 · 根段</text>
+        <!-- 转轴 -->
+        <rect x="30" y="182" width="300" height="12" fill="#8A8378" data-page-node-id="zGzu6VRYTulcX3PJc0Fi7E"/>
+        <circle cx="36" cy="188" r="14" fill="#6E7380" data-page-node-id="9gAVwe3aJfW7llgx5YMQo9"/>
+        <circle cx="326" cy="188" r="14" fill="#6E7380" data-page-node-id="S3FVd56c5UM4GrxaDACegs"/>
+        <text x="20" y="360" font-family="Noto Sans SC" font-size="15" fill="#8A3C12" data-page-node-id="f6kFVCTG6H0TUa7CzkzX8o">M3×12 螺丝 ＋ 尼龙垫圈</text>
+        <text x="20" y="382" font-family="Noto Sans SC" font-size="15" fill="#8A3C12" data-page-node-id="1cE0gZQ3CfDVQJEzH0Z4PN">＋ 热熔铜螺母（压入腿根一侧）</text>
+      </svg>
+      <figcaption data-page-node-id="rcAAYYkHuEKbN2FOa2oyST">齿盘咬合剖面 · 尼龙垫圈提供预压，齿不会跳开。</figcaption>
+    </figure>
+
+    <figure data-page-node-id="XhYezu0DfBcHAtCB5H00M4">
+      <svg viewBox="0 0 460 400" xmlns="http://www.w3.org/2000/svg" data-page-node-id="y8jskSnQhEkefsGdRDZfbJ">
+        <text x="20" y="28" font-family="Noto Sans SC" font-size="18" font-weight="700" fill="#23262B" data-page-node-id="hHD1RKLNW5wGaLjJQDhl0k">B · 齿形放大（1 齿）</text>
+        <!-- 齿 -->
+        <polygon points="60,250 110,250 100,200 70,200" fill="#4A4E55" data-page-node-id="ajkmnViEr50kqxAkDAeGIK"/>
+        <polygon points="140,250 190,250 180,200 150,200" fill="#4A4E55" data-page-node-id="6CXySVTz8gaAMGTpWBjSGV"/>
+        <polygon points="110,250 140,250 130,212 120,212" fill="#8A8378" opacity="0.35" data-page-node-id="HR2S9O9hTRpzOyoktXDCnJ"/>
+        <!-- 尺寸 -->
+        <rect x="70" y="182" width="30" height="2.4" fill="#8A8378" data-page-node-id="hxvCgWbjeYh1eNF5b1SXUW"/>
+        <rect x="69" y="174" width="2.4" height="19" fill="#8A8378" data-page-node-id="oD003qIjDq1fY5vTuR6DL1"/>
+        <rect x="99" y="174" width="2.4" height="19" fill="#8A8378" data-page-node-id="rZ8QRqmj0z46lryph9x8oK"/>
+        <text x="76" y="168" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="7dhBCXgAHcATD8eHEnZDz9">齿顶宽 4</text>
+        <rect x="200" y="200" width="2.4" height="50" fill="#8A8378" data-page-node-id="RNw4Qh5yFov5kfSmpIwQoC"/>
+        <rect x="192" y="200" width="19" height="2.4" fill="#8A8378" data-page-node-id="hP0kcHAj7dNRoKHESYyvKR"/>
+        <rect x="192" y="248" width="19" height="2.4" fill="#8A8378" data-page-node-id="eKiRU1F1tbYSeLbRW3WJgd"/>
+        <text x="212" y="228" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="GbFjA7Ow6L0gsn5exNbrgO">齿高 1.2</text>
+
+        <rect x="30" y="286" width="2.4" height="86" fill="#DCD6C9" data-page-node-id="We6OwwR16S72MHObLSbqFO"/>
+        <text x="46" y="298" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="aHAZswf59D8OlD09aSCdAg">齿数 16 → 每档 22.5°</text>
+        <text x="46" y="324" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="GKSKDfam8DB29IFMfEzfdX">齿顶角 60°，齿根做 R0.3</text>
+        <text x="46" y="350" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="GTFfiBuso4DZOGtdxZtBC3">16 档比 12 档更细，但齿更小、</text>
+        <text x="46" y="374" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="8dcpvmp5nCCtBM8LHWHosg">FDM 打起来边缘容易糊 —— 建议 12 档。</text>
+      </svg>
+      <figcaption data-page-node-id="rXjSGUt8CC9WG4JBHVAfU8">齿形参数。12 档（30°）比 16 档更适合 FDM。</figcaption>
+    </figure>
+
+    <figure data-page-node-id="4joxo7xmWbT5h7sG7CG5ix">
+      <svg viewBox="0 0 460 400" xmlns="http://www.w3.org/2000/svg" data-page-node-id="AyfKeitoolb94OLQGFhwf0">
+        <text x="20" y="28" font-family="Noto Sans SC" font-size="18" font-weight="700" fill="#23262B" data-page-node-id="xY9cCE8GAzSIm8iDr0NSeh">C · 髋支架插入身侧</text>
+        <!-- 身壁 -->
+        <rect x="30" y="70" width="120" height="270" rx="12" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="JxTNxoCvWBHDwC2VoBloGU"/>
+        <text x="52" y="352" font-family="Noto Sans SC" font-size="15" fill="#6B6862" data-page-node-id="DAWfEaDHMOPISCFHgQHJrd">身侧壁</text>
+        <!-- 滑槽 -->
+        <rect x="120" y="130" width="30" height="150" rx="6" fill="#D8C9A8" stroke="#A89060" stroke-width="1.6" data-page-node-id="ngXGSuxARezmzKQHJUcUzr"/>
+        <!-- 支架舌 -->
+        <rect x="148" y="140" width="64" height="130" rx="10" fill="#2E3138" data-page-node-id="bAebzvy2qfF2cM3pLGj3PF"/>
+        <rect x="126" y="150" width="26" height="110" rx="5" fill="#4A4E55" data-page-node-id="Bp8HBObxDiPuD5OfDvR7EX"/>
+        <!-- 锁紧螺丝 -->
+        <rect x="106" y="188" width="60" height="10" fill="#8A8378" data-page-node-id="GZm06iudapYCGO6sPHfHsG"/>
+        <circle cx="100" cy="193" r="12" fill="#6E7380" data-page-node-id="4Zz5pJbLJrD4UzgD72xP1N"/>
+        <text x="170" y="316" font-family="Noto Sans SC" font-size="15" fill="#6B6862" data-page-node-id="bFt7hWoWMnLDAkdZYPYp1a">髋支架</text>
+
+        <rect x="24" y="340" width="2.4" height="52" fill="#DCD6C9" data-page-node-id="wN3UOPTLe7iwmCYXkOcMBP"/>
+        <text x="40" y="352" font-family="Noto Sans SC" font-size="15" fill="#8A3C12" data-page-node-id="sFWbWuHQrun7omdIdXFO23">侧槽宽 6.6（舌厚 6 ＋ 0.6 间隙）</text>
+        <text x="40" y="378" font-family="Noto Sans SC" font-size="15" fill="#8A3C12" data-page-node-id="PwHlkMe8I9oJTrtbchhv7M">锁紧孔 Ø3.2，配 M3 热熔铜螺母</text>
+      </svg>
+      <figcaption data-page-node-id="FlkcrQJ9IN35Jxky1it9Di">髋支架从侧槽插入，一颗 M3×10 侧向锁紧 —— 换单条腿不用拆整机。</figcaption>
+    </figure>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px;" data-page-node-id="ImzMzLH64ygfRdv0GsiHbZ">
+    <figure data-page-node-id="qbU4ohO9kRtiWuBC1ielfF">
+      <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" data-page-node-id="AI5l4GNhkZlVMoXkfNDl8v">
+        <text x="20" y="28" font-family="Noto Sans SC" font-size="18" font-weight="700" fill="#23262B" data-page-node-id="h6g40PPVsXp2Lh6inXMUsQ">D · 热熔铜螺母柱（标准柱型）</text>
+        <!-- 柱剖面 -->
+        <rect x="90" y="80" width="56" height="180" fill="#E6DDC8" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="yzdkqKVMhskIrbgCf4YGA0"/>
+        <rect x="106" y="96" width="24" height="150" fill="#FFFFFF" stroke="#8A8378" stroke-width="1.6" data-page-node-id="ZKX1NCcQFz5lum6bnSaO3R"/>
+        <rect x="106" y="104" width="24" height="44" fill="#B9BCC4" stroke="#6E7380" stroke-width="1.4" data-page-node-id="B1FxHoo4UBS4CPwNdKhjnp"/>
+        <!-- 肋 -->
+        <rect x="78" y="118" width="12" height="8" fill="#CFC4AA" stroke="#2B2E33" stroke-width="1.4" data-page-node-id="OoEUZ7FkcKUvA7wlMvbooE"/>
+        <rect x="146" y="160" width="12" height="8" fill="#CFC4AA" stroke="#2B2E33" stroke-width="1.4" data-page-node-id="nA57oMGDsbMDxBJcpJw0nm"/>
+        <!-- 壁 -->
+        <rect x="40" y="252" width="160" height="22" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="qtDpbmZlgWPstDqxcXPDXa"/>
+        <text x="60" y="300" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="hmx49zTeKDtoO1CuLtluwl">壳壁 2.5</text>
+
+        <!-- 尺寸 -->
+        <rect x="180" y="80" width="2.4" height="180" fill="#8A8378" data-page-node-id="xQTYm0sNHYjgHhvouTKcFU"/>
+        <rect x="172" y="80" width="19" height="2.4" fill="#8A8378" data-page-node-id="kKQ3rpH0dSxA32CL5xOWBr"/>
+        <rect x="172" y="257.6" width="19" height="2.4" fill="#8A8378" data-page-node-id="LNm6NILGKouNavAhjgMHLI"/>
+        <text x="200" y="176" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="lVo4ehY6ewR8TssArFdYDm">柱高 ≥ 螺母长＋1</text>
+        <rect x="62" y="60" width="112" height="2.4" fill="#8A8378" data-page-node-id="z9JeEMHwSNlm8mGYAhUjqR"/>
+        <rect x="61" y="52" width="2.4" height="19" fill="#8A8378" data-page-node-id="6w66Ch0NSE3rFaQGN2hFCU"/>
+        <rect x="172.6" y="52" width="2.4" height="19" fill="#8A8378" data-page-node-id="JXRhC9tvxInVi8CloFVOwx"/>
+        <text x="88" y="46" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="vFqZ6QD3jQOtczggQT7665">柱外径 M3 ≥ Ø7.0</text>
+
+        <rect x="360" y="80" width="2.4" height="120" fill="#DCD6C9" data-page-node-id="OWGIEiNOXI75GCzTTGPsrs"/>
+        <text x="376" y="94" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="ltSY3UHxr0q8S3l0lYLxzq">M3 柱：外径 Ø7.0，热压孔 Ø4.2</text>
+        <text x="376" y="122" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="wUTgfUR1MJPr7nbTWCeVJI">M2 柱：外径 Ø5.5，热压孔 Ø3.2</text>
+        <text x="376" y="158" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="ypvOnpRpEhn4l2pXmxEXNr">柱身加 3–4 条纵向加强肋</text>
+        <text x="376" y="184" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="Im2EEqPfgM5fzQLMHbY8dG">柱与壁交接处加 R1 圆角</text>
+
+        <rect x="360" y="230" width="2.4" height="90" fill="#DCD6C9" data-page-node-id="UdsVLGQGpzfR1SGxLX4iPD"/>
+        <text x="376" y="244" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="iMEhzvfw7AoDXGVI24dFv1">热压温度 250–260℃，</text>
+        <text x="376" y="270" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="TF4UGxr693rIHTCzmr08Fb">烙铁头压到底后停 3 秒，</text>
+        <text x="376" y="296" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="iVv2RKOsHwHdbCgbjeq5JR">冷却 30 秒再松手。</text>
+      </svg>
+      <figcaption data-page-node-id="2yVJpHw3zjQX0UEgTPCSp5">螺母柱标准型。柱太细会在热压时开裂 —— 这是打印件最常见的结构性失误。</figcaption>
+    </figure>
+
+    <figure data-page-node-id="PWHliCc5FclHRV1n7fypcg">
+      <svg viewBox="0 0 620 360" xmlns="http://www.w3.org/2000/svg" data-page-node-id="U4EyABJ0e1z8FEqkRPFfSY">
+        <text x="20" y="28" font-family="Noto Sans SC" font-size="18" font-weight="700" fill="#23262B" data-page-node-id="sXQLPVzu59EHKTHW1Bb0Ae">E · 合壳唇边（台阶搭接）</text>
+        <!-- 上壳 -->
+        <rect x="60" y="70" width="200" height="90" rx="10" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="v6kU1LFBXmS482n63VBAWW"/>
+        <rect x="60" y="148" width="200" height="12" fill="#E6DDC8" stroke="#2B2E33" stroke-width="2" data-page-node-id="jzRUdYw0UaEnEQ2JMtW8T9"/>
+        <rect x="60" y="148" width="34" height="12" fill="#F0E9DA" data-page-node-id="g6EtX66qotocLlTAnfC88q"/>
+        <!-- 下壳 -->
+        <rect x="60" y="160" width="200" height="90" rx="10" fill="#F0E9DA" stroke="#2B2E33" stroke-width="2.5" data-page-node-id="yw0ZXanhVP1hJ8EUNUdn9x"/>
+        <rect x="94" y="148" width="166" height="12" fill="#E6DDC8" stroke="#2B2E33" stroke-width="2" data-page-node-id="X1EBIRvVLEQZjBKptzmbAG"/>
+        <rect x="94" y="160" width="166" height="12" fill="#F0E9DA" data-page-node-id="KkZ6A3q4OiytFVwR1zqerd"/>
+        <!-- 分型线 -->
+        <rect x="40" y="158.6" width="240" height="2.6" fill="#F26B21" data-page-node-id="DCJd7WEaSNGVhKNovzBHMQ"/>
+        <text x="296" y="164" font-family="Noto Sans SC" font-size="16" fill="#8A3C12" data-page-node-id="YvvJjHDKwsipC6m08uvVG3">分型线（对齐，不错台）</text>
+
+        <!-- 尺寸 -->
+        <rect x="60" y="46" width="200" height="2.4" fill="#8A8378" data-page-node-id="jVt5Q1B61fI0ttw585QenZ"/>
+        <rect x="59" y="38" width="2.4" height="19" fill="#8A8378" data-page-node-id="cLINK55LE5zgkExassxTQP"/>
+        <rect x="258" y="38" width="2.4" height="19" fill="#8A8378" data-page-node-id="piuVT2KRMLoaNl4CX4p6FA"/>
+        <text x="104" y="34" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="BZO1pCkbAL2d7qG63KNwoU">搭接唇：宽 2 × 高 1.5</text>
+
+        <rect x="40" y="286" width="2.4" height="60" fill="#DCD6C9" data-page-node-id="BRnbYkRS47lXOym7AvCWbe"/>
+        <text x="56" y="298" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="61GalTyqa15Nm5N2zkDFNW">为什么不做平接：平接靠螺丝对不齐，</text>
+        <text x="56" y="324" font-family="Noto Sans SC" font-size="16" fill="#6B6862" data-page-node-id="JuTOqCM3RNsR4W3MVNWO3o">一道 0.3 的错台在哑光面上极其显眼。</text>
+        <text x="330" y="298" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="4D8OUYYpqFfjtrOZL8hDi5">搭接唇按 0.3 间隙配作，</text>
+        <text x="330" y="324" font-family="Noto Sans SC" font-size="16" fill="#4A4A50" data-page-node-id="I7Tfk3kq7RBscLkV4DXtAM">装上去自然咬合。</text>
+      </svg>
+      <figcaption data-page-node-id="QbYLYHYJxGmHGsvgHFMDrI">合壳搭接唇 · 防止分型线错台。哑光面上 0.3 的错台一眼可见。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 04 打印件清单 ============ -->
+<section data-page-node-id="WcLIjPkRTmVQY2jEfo0NcB">
+  <div class="sec-head" data-page-node-id="wkBXkBAJ8M7tl58DhrALbP"><span class="sec-no" data-page-node-id="sUV0rFdTc8jACNzBqcKwtJ">04</span><h2 data-page-node-id="vvqL7ObGpBLRFZSorO5mCv">打印件清单：13 件，一次排完</h2></div>
+  <p class="sec-note" data-page-node-id="Vv6AQOVQ4cezMs2AnEHv0v">这一张直接决定你开几次机器。**件数越多越容易出错**，所以我把能合并的都写了合并方案。</p>
+  <table data-page-node-id="aWvfQAgbBhTyK4HmTphM1N">
+    <thead data-page-node-id="5aAREcUyCqFYepbonnS7G0"><tr data-page-node-id="altmueNzd64xQhVBb40Qj2"><th data-page-node-id="BtRtDYswZ6bZxRAex4XU0d">#</th><th data-page-node-id="s92b7NEPUPUqRuzyIEdihQ">件名</th><th data-page-node-id="u4uisPFcGAKKUw3tizquqZ">数量</th><th data-page-node-id="btB8E9G9Ker8asED6K09b2">关键尺寸</th><th data-page-node-id="WeChlwy7Y0K6FdHVIOMnjF">打印方向</th><th data-page-node-id="cISnqaiOBQ03d7hyOmPmdc">填充</th><th data-page-node-id="2pgwaIRHTwCwDNhdMaXqrz">可合并？</th></tr></thead>
+    <tbody data-page-node-id="rBd2Cq0Sm1nSHFOkA3m2AD">
+      <tr data-page-node-id="c80L18bh2Pt3kRBgjKPaKJ"><td class="v" data-page-node-id="MVvbSKsUFqHK9zthmSUzqi">P1</td><td data-page-node-id="1ZWmrS1ehzuE2m7HVtKxon"><b data-page-node-id="P0HuKvTywnhfdmqGYBqG74">头壳 · 前壳</b></td><td data-page-node-id="XE4vrlH1ExgHyxdNKrBLrq">1</td><td data-page-node-id="lbJBhCmM0zCdCx9aPt4V8L">含喇叭基座凸台、沉台 Ø52.6×6</td><td data-page-node-id="mDhhJmhlbGmLVAXXlLOEE3">正面朝上</td><td data-page-node-id="MnTBC5Uq4ITR1iGR88dj3N">25%</td><td data-page-node-id="x7QByz8v3uTPsqja1wAkdv">—</td></tr>
+      <tr data-page-node-id="CtOMRFkBzNXFnmmG0nTDmd"><td class="v" data-page-node-id="GO79g1KKcgedJEKLADobjA">P2</td><td data-page-node-id="CeAHReE9C4FCl6uzYrHaTi"><b data-page-node-id="8hpjcDgE4Zem2QQaf1Sisk">头壳 · 后壳</b></td><td data-page-node-id="npH3fPnIFdMMKIBHNv4pkL">1</td><td data-page-node-id="X4cq4GVVU9lGwhqTjy7YLf">与 P1 搭接唇配作</td><td data-page-node-id="ESA5LydfryWZIDQEUKqLCn">背面朝下</td><td data-page-node-id="4Hb7iwvdz7vrmBbjmPJ7Wp">25%</td><td data-page-node-id="CFB7ev3DkGGqYmWgYXqGYW">—</td></tr>
+      <tr data-page-node-id="5NHaex7enqSKkhUYwCRONe"><td class="v" data-page-node-id="Nf4CGjqRpLqLhxB90q9VVA">P3</td><td data-page-node-id="ejSSJBiHvvcIIbna1MgEKI"><b data-page-node-id="SekaueuAgvrYPRE0qBQxSt">橙色顶盖</b></td><td data-page-node-id="rAcKjwHIZ6rsPzGPZY1jFT">1</td><td data-page-node-id="XEE4XtYzSj0tF6poNbS3Hw">薄壳 3 厚，包住头顶</td><td data-page-node-id="v8q8KpZawhcYAiNvkUJCkv">顶面朝上</td><td data-page-node-id="dQbtHfQbCGgs74G7qrsQW1">30%</td><td data-page-node-id="uWH0U6pIn8eEH0WmrcBqok">可与其他橙色件同批</td></tr>
+      <tr data-page-node-id="jpI5hzTUVhgrxySl5H6NUj"><td class="v" data-page-node-id="xWOHP0v7nq3kkGF2GqlZrO">P4</td><td data-page-node-id="Ck1ZuTzw9zKOlqKsV0ZEKS"><b data-page-node-id="zuWVID8PTVPsA9drmwspqZ">喙面板</b></td><td data-page-node-id="8XAKHe2CreOMEhOobVKxDk">1</td><td data-page-node-id="uHHQ67Bjb9x0lWu9P8AkgQ">88×18，厚 7，光缝 70×6×2</td><td data-page-node-id="xX5TqXULk2K8HmcIQgEhWx">正面朝上</td><td data-page-node-id="FOGoLDmk6A1gX4SBViPHAA">30%</td><td data-page-node-id="pyl5EdNv29BgLt37LLSz9J"><b data-page-node-id="YuUsIW7Nu8A0wza0sfEG3I">建议与 P3 合并打印</b></td></tr>
+      <tr data-page-node-id="M0PUWxBBWlkrWXCIpoEPaC"><td class="v" data-page-node-id="g7Hmxqnx7nwJiNXDqmpqs2">P5</td><td data-page-node-id="mFKOR2YtJnEvgZRMzgv0ON"><b data-page-node-id="clSNS8R3lVGURsM69RIwmS">声学中箱</b></td><td data-page-node-id="UqNJGw0fPW6CqWGB3UACwX">1</td><td data-page-node-id="h48Zh7lJkxy0GxdAPZPOAs">内腔 L 形，净 0.40 L</td><td data-page-node-id="Mp6Kso63erWN3YqK5UtNx0">背面朝下</td><td data-page-node-id="PtBsjBlEukyhuTUR5mIwEL">30%</td><td data-page-node-id="64GiY3xfLIC56XXwKAKBW0">—</td></tr>
+      <tr data-page-node-id="Pn9GLgPmHnivCIrbIKdLrG"><td class="v" data-page-node-id="sTHEyqdTAY8mwi6kNqkjro">P6</td><td data-page-node-id="Yva8V4vd4Xq4W250UJagr1"><b data-page-node-id="oHwYdj6pu4rYTK9bGYE2wp">光箱</b></td><td data-page-node-id="yx9CjiPy3A7MElnsMknnBW">1</td><td data-page-node-id="aefGgfe1osBRu2y6OaNkyH">内腔 84×42×18，内壁喷白</td><td data-page-node-id="8Dvo7pLdlX7liRpzJANtbL">开口朝上</td><td data-page-node-id="HtViPXFMb0nB6gsiIt0zOI">30%</td><td data-page-node-id="gP8BDblzEcCRIO4CF7jHfw">可与 P5 合并（同一腔体分隔壁）</td></tr>
+      <tr data-page-node-id="E3EsgcZosaIwjeURRsqctp"><td class="v" data-page-node-id="PBNe84utZqftxm7LLQU5n5">P7</td><td data-page-node-id="dw2tyyVfs8MZrjGoOPL1rv"><b data-page-node-id="mN2hL65H5iNICIdnu71Ol6">颈</b></td><td data-page-node-id="yF5iQ5xEuzAuEyo2RaKQoT">1</td><td data-page-node-id="vfctUhdEfzWQ5BBY19YjU0">高 26，内孔走 2×M4</td><td data-page-node-id="q4M0vKuxSuCJCJLk1XqSF0"><b data-page-node-id="TEjLLAmaTVMAgurtVysllx">必须横躺</b></td><td data-page-node-id="p2ZaGLEWPLFwSCkqqltCE3">45%</td><td data-page-node-id="GL9FJXw1WGlOnmjmoux5dT">—</td></tr>
+      <tr data-page-node-id="ExKrN6Siqa6tlWTqGbJTgP"><td class="v" data-page-node-id="CEvbScopgTtyi0NDV0GJcJ">P8</td><td data-page-node-id="SHZbQSrYxMJbsmNRqp9vFB"><b data-page-node-id="k9E997h59rxPX1HfwiTolT">身壳 · 底壳</b></td><td data-page-node-id="vDmYR8HErulVztYWIlcrsB">1</td><td data-page-node-id="tj46ryDEh8vNCaFH4djp08">含滑槽、DC/开关/按钮孔位</td><td data-page-node-id="nVQJgRAxHgAJq7xPrjEO6k">开口朝上</td><td data-page-node-id="dM5TxiYAX9EogcRrNfm0ff">25%</td><td data-page-node-id="XPKOSCltWxl5oAbMqzmFxo">—</td></tr>
+      <tr data-page-node-id="0Obk8eEKQ6sAARAJs1jWeH"><td class="v" data-page-node-id="WtAetHDoOpPEtfvDoOwQGS">P9</td><td data-page-node-id="Wsg4MHGwsQLJ6bwGnBVvrx"><b data-page-node-id="83cBXJ6dKvvUd08ZIevYoB">身壳 · 上盖</b></td><td data-page-node-id="KaNzBHKImXPfhZq9OzosHS">1</td><td data-page-node-id="AVB9yQxWKV7AAGhaBIyMOt">与 P8 搭接唇配作</td><td data-page-node-id="HJLFJQE2E32FNRMgLb0e1w">顶面朝上</td><td data-page-node-id="uHWE4sSew0hygqfp6FPyhO">25%</td><td data-page-node-id="bE3z73mv0s8I3HMs4Tbwti">—</td></tr>
+      <tr data-page-node-id="Y4nqIABCaNEg7rEnLFYLWd"><td class="v" data-page-node-id="lc40nRRKTDqWyguMdyVR7U">P10</td><td data-page-node-id="3pzKJLQtjpC7UAaXrUfiL5"><b data-page-node-id="TtNwZILIfNvL77igUjaCBq">髋支架</b></td><td data-page-node-id="eDzMI4kxAwyRPIyKCd7SIC">4</td><td data-page-node-id="9qzTXnFVIAwykm84BM6nua">舌厚 6，含齿盘 A</td><td data-page-node-id="aEHzK7YMsAsw4U9cfCGfMH">侧卧</td><td data-page-node-id="dm8EUd8KoReXDV9unIMjz1">45%</td><td data-page-node-id="EvcnEX2M5cVmBQIwMIvNn7">4 件一次排满</td></tr>
+      <tr data-page-node-id="umgguItvJAwPxcmylY1Xxe"><td class="v" data-page-node-id="tW0bLzXqfWPcB7MTgybwfa">P11</td><td data-page-node-id="46w7dVh4757ff4EkTDw41M"><b data-page-node-id="DIYoi7A0SsqFFPRcHzRPEC">腿 · 上段</b></td><td data-page-node-id="PItLMOvpuoyUM9wBmzJoXD">4</td><td data-page-node-id="493HnrABFfCrhxjtjoyTob">含齿盘 B 与髋轴孔</td><td data-page-node-id="2gON4oiDkoqZKg2juwkRz2"><b data-page-node-id="jO1T5nug0K5bOXK9YzNCRM">侧卧</b></td><td data-page-node-id="guKcStwYZpaThwyTl7n06k">45%</td><td data-page-node-id="oVyA8VeA1grZrqX8FB1NdD">4 件一次排满</td></tr>
+      <tr data-page-node-id="kGY2MAl6BZgN9jBeWlAaE3"><td class="v" data-page-node-id="4DuZwuhynnea5ehgyJGpOx">P12</td><td data-page-node-id="mkYst23NymXiA8TFoRhd48"><b data-page-node-id="wlMV0sO5ufed3mySmjjesz">腿 · 下段</b></td><td data-page-node-id="VDUfvKVga4ezaOls8fQ3Ub">4</td><td data-page-node-id="AV3GFIyufiFsbJFcTeDKe2">含膝轴孔与踝</td><td data-page-node-id="xn0wFIcSPJ1ZU4Clz2Eeos"><b data-page-node-id="AyMjMLq6cbPk9QU1YXeuxC">侧卧</b></td><td data-page-node-id="OoYunFa9D0C1RyYr7sibpd">45%</td><td data-page-node-id="5SuJfZ0kT7kzDm2V631NWy">4 件一次排满</td></tr>
+      <tr data-page-node-id="BMBWPlbEGcfZcmbv67QvWi"><td class="v" data-page-node-id="mlkXmkMVi6ykHX8GuHPng4">P13</td><td data-page-node-id="eTbFMrOt2bfj5IjZniFWRe"><b data-page-node-id="7tUvNBFgEYOj37bQN4Z4ol">脚掌</b></td><td data-page-node-id="LmiD0IqBFAonveGyeH4kVB">4</td><td data-page-node-id="3LBejrh6irYxhzyNnuRJAr">40×32×11，橙色</td><td data-page-node-id="E4yFiDy9vU6XERUjzs6Oyw">大面朝下</td><td data-page-node-id="LElUYF7zqmAHoFPrlycPK2">40%</td><td data-page-node-id="h4yEfM8Bd0KlehYGBA5GNN"><b data-page-node-id="OR3ZyLNvhEoMCerLdX5BnH">与 P3/P4 同批（同为橙色）</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid g2" style="margin-top:20px;" data-page-node-id="vujAdYcSAr5vWbl1Apy1LE">
+    <div class="ok" data-page-node-id="yBo6VIsjW4H8I60f3gs26t">
+      <h3 data-page-node-id="g96lH0eCUjxAEeAtgtJwqQ">✓ 省工作量的四个合并</h3>
+      <p data-page-node-id="NbYYFAa1kG3Ph13DqmbcUV"><b data-page-node-id="H3pt2zZZN7pAcdVE8Xq8BA">① 声学中箱与光箱合成一件。</b>它们本来就贴在一起，中间那道分隔壁直接一体打印 —— 省一件、省一次装配、还省一道密封。</p>
+      <p data-page-node-id="2RGeq993PdhU3Dzrqw94UC"><b data-page-node-id="Dau2ZkMdLeBCkUVcLYlgvW">② 三条腿的件按颜色分批。</b>P10–P12 共 12 件全是黑色结构件，一次排满一个平台；脚掌与顶盖、喙同色，另开一批橙色。</p>
+      <p data-page-node-id="w1mRCojJQcIWcPFM1CgGVS"><b data-page-node-id="Xk5P2JVdfpcVsfLwiUowSN">③ 髋支架和腿根做同轴孔。</b>两件共用一套齿盘参数，画一次、复制 8 份，不用画八遍。</p>
+      <p data-page-node-id="bTrAMMbTADFc2B4MA2O7Z4"><b data-page-node-id="3cEmlCCT30b9R0lpG5xnVy">④ 先只打一只腿试装。</b>齿盘啮合、轴孔配合、髋槽间隙全部靠实物验证 —— 一只腿试通了再排 4 套。</p>
+    </div>
+    <div class="warn" data-page-node-id="4nseDczlescNxp8eDNKxd5">
+      <h3 data-page-node-id="y7x1nsPsL84MTecLKeUSEq">⚠️ 四条会吞时间的坑</h3>
+      <p data-page-node-id="0oMjq6IDtNRGcA1lkyVYAw"><b data-page-node-id="XZZ7D4ZH8Bh7augCnYoxEN">① 腿和颈绝不要竖着打。</b>层间剪切强度远低于层内，竖打的腿一碰就沿层断。这是最容易发生、也最难返工的错误。</p>
+      <p data-page-node-id="yOMStPtFn6Rl5LzfQpku88"><b data-page-node-id="VXLWUFbc3FDFJ5mIuZUa1P">② 分两次试装。</b>第一次只打 P5/P6（声学箱＋光箱）和 P1（前壳），验证喇叭装得进、光箱塞得下；第二次再打全套。</p>
+      <p data-page-node-id="8QbdikGQHqFHhQevpAoimU"><b data-page-node-id="gqbC42JbKOdqG9mtOP6etA">③ 齿盘别一次做到位。</b>先打 0.3 间隙的版本试咬合，太松再加预压垫圈，太紧再加大间隙。齿盘间隙是调出来的，不是算出来的。</p>
+      <p data-page-node-id="SdN08rO6y6NBBILw3usv0W"><b data-page-node-id="nhdIyVjwXlRs4Cwb3Ge6ms">④ 后处理要留够时间。</b>打磨 400→800→1500 → 底漆 → 哑光面漆，13 件全做一遍至少一整天，而且必须晾透。这一条是上一届拉开档次的地方，别挤到最后一天。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 装配顺序 ============ -->
+<section data-page-node-id="hDERa1FFPOlnH4ZwKnZlpn">
+  <div class="sec-head" data-page-node-id="esVXhEDKBVz3Zc4zSvzNnz"><span class="sec-no" data-page-node-id="GPpyBFksNTXhLEbYgBrZcB">05</span><h2 data-page-node-id="vs0CMk5ddkH9tBTHT5EUK8">装配顺序（按件号重排）</h2></div>
+  <p class="sec-note" data-page-node-id="9WLhG3cXDbwPcmHBvUF3Eh">顺序被两条规则锁死：<b data-page-node-id="bbwxApUb3BFwzKzeVxvw97">能单独做完并测过的绝不合起来做</b>；<b data-page-node-id="fHfbB9EemSgpSC5DftrKEU">整机在装配过程中必须始终能平躺</b>。</p>
+  <ol class="steps" data-page-node-id="2cGpG74JWHn1GtUwss7iSN">
+    <li data-page-node-id="mD4puS7wqCGtfRzAmCHXRt"><b data-page-node-id="T5HB8CiISkuq2ZA0pUayEn">打完全部件、压好铜螺母。</b>13 件全部打印完成后，趁热压入 M3/M2 热熔铜螺母，控温 250–260℃。</li>
+    <li data-page-node-id="w0hqhIGRdyNkEKozvUtR9L"><b data-page-node-id="hpralgT6OMZBzutEgGRXzF">单独做声学箱（P5+P6 一体件）。</b>装喇叭 ＋ 泡棉环 ＋ 压圈，封过线孔。<b data-page-node-id="XvwPKSjsGatrIszqnWddX6">先做气密测试</b>：封住喇叭加压吹气，10 秒不掉压即合格。</li>
+    <li data-page-node-id="4u50epX9C80Es7JdqPJrS4"><b data-page-node-id="gqAuytpiNf6zk5rAIVS6cE">台面上焊完并调试全部电路。</b>功放、ESP32、降压、灯板、开关、按钮、DC 座全部先通电、出声、亮灯，测完再往壳里装。</li>
+    <li data-page-node-id="Dimh3RNdq1hqctVZm0Xp47"><b data-page-node-id="MXoboXqeYZw3qJp0cFlezY">把灯板装进光箱、内壁喷白、装扩散板。</b>通电检查出光是否均匀、有没有亮点。这一步在壳外做，最方便返工。</li>
+    <li data-page-node-id="F72AtAKjonuBgdvBCxWQxN"><b data-page-node-id="KO2ceVloa42BYZlVBYXzYy">声学箱 ＋ 光箱整体推入前壳（P1）。</b>走线从后方过线孔引出，绕过分隔壁下到颈。</li>
+    <li data-page-node-id="w1gD6tReZx3nViFqi5hLr8"><b data-page-node-id="A3JmSFF35qC61wAetkx96e">装颈（P7）与两根 M4 螺纹杆。</b>杆穿进颈内，上端锁进前壳的螺母柱。此时可以检验整机的头部刚性。</li>
+    <li data-page-node-id="sGYCjB7s5sdAuoPB68YOT6"><b data-page-node-id="BgjzXGunsOUX5QSoKLKXRD">合后壳（P2），装顶盖（P3）与喙面板（P4）。</b>合壳时顺好线束 —— 夹住一根线，声学腔就漏了。</li>
+    <li data-page-node-id="eFcvPtcFmGQmWwFUjZLGhz"><b data-page-node-id="KN0LwYyrv3LtMJVZYndHjy">线束穿过颈，接上身底壳（P8）。</b>线先留长，等上身电路接完再收。</li>
+    <li data-page-node-id="cZOXUC4nlTKUpENsB7Ajrj"><b data-page-node-id="A5c48TLlF7IwjCKDCfMWaB">身内做「配重组件」。</b>钢板 → 导热硅胶垫 → 功放板，先固定成一体再入腔；再装降压与 ESP32（天线端朝外，留 10mm 净空）。</li>
+    <li data-page-node-id="ytvGo0bTfAnc9XACEnVOyE"><b data-page-node-id="vcUNCVS0Uh8ArTPIwNr8Tg">装 DC 座 / 开关 / 按钮并接线，合上盖（P9）。</b>开关开孔前先用纸板做一次拨杆行程模拟；合盖前先整机通电验一次。</li>
+    <li data-page-node-id="HnMnDqKDRxuBaeYDqF6SEu"><b data-page-node-id="p3PDe5UIthey8sZMvqQtGE">装腿。</b>髋支架（P10）插进身侧滑槽、锁 M3×10；再装腿上下段（P11/P12）与膝轴；最后扣脚掌（P13）。<b data-page-node-id="tiZx8HKzl5Y2qRmh5c5cYk">先装一条腿调好齿盘预压，再照做另外三条。</b></li>
+    <li data-page-node-id="dmMtDkyMHJYasNrDl8Kxx8"><b data-page-node-id="0YTafmKcnOSzPTn2pS9AmI">调平 ＋ 烧录 ＋ 收线。</b>四脚调平（不平就会晃，一晃全毁），贴硅胶防滑垫，烧录代码并设亮度 ≤120，最后收好线束。</li>
+  </ol>
+</section>
+
+<!-- ============ 06 还差什么 ============ -->
+<section data-page-node-id="E5EJXm4zRvw6lA6jpJgF1G">
+  <div class="sec-head" data-page-node-id="OLu6FmZ9t1PySyfdNvGRqa"><span class="sec-no" data-page-node-id="0ESCCJaj3AR0IaCGHBMag8">06</span><h2 data-page-node-id="DYsjGfBA5FqR8qAA4g65fF">这份图里哪些数是「待实测」</h2></div>
+  <p class="sec-note" data-page-node-id="LKeRHCTxRp4N0jrTDkAwc3">上面所有结构都是按设计基准值画的，<b data-page-node-id="BpWURHAimpW4uk8Ddy2VMO">改实测值不需要重画结构，只需要改数字</b>。以下是需要替换的地方：</p>
+  <div class="grid g2" data-page-node-id="hSUmdf2HJx9N7xVkjEFywv">
+    <div class="card" data-page-node-id="iPWmfAbUivmgoeLgMNGTmX">
+      <h3 data-page-node-id="kAWcCPlSKobtJkj2w1WTiX">会改到结构的（必须先测）</h3>
+      <p data-page-node-id="C2ss61f6ohTOHvACfoIs40"><b data-page-node-id="hSgiS9Mjh9YUMG8u37fDus">① 功放板长度</b> —— 若「66 max」指的是板长，身内腔 71 会顶住，需斜放或把身宽加到 84。</p>
+      <p data-page-node-id="B4rjHTuwlX2vE4YDQXkDXT"><b data-page-node-id="y0AoGBco0l2UdRKUYp92S8">② 灯板单片宽度</b> —— 若是 39 以外，光箱与出光口的长度要重算。</p>
+      <p data-page-node-id="qofS9E3cdb9ey8QFDedjD2"><b data-page-node-id="fH9SPfqQ1Ym9zCV52wlRsD">③ 喇叭安装孔中心距</b> —— 决定沉台周边的螺母柱位置。</p>
+      <p data-page-node-id="At3E55yz2TDGlMgIMoUnep"><b data-page-node-id="j8vrWngpKafZpbkGm1OGsi">④ 降压模块厚度</b> —— 决定它能不能塞进钢板与 ESP32 之间。</p>
+    </div>
+    <div class="card" data-page-node-id="9dXbHg5NDee5EfBgIwD4Hh">
+      <h3 data-page-node-id="O6jIOSfPghxMKT07fgl6C8">只改数字的（后面补也行）</h3>
+      <p data-page-node-id="Jl6KjJOyAMfyvtg4ffDHUD"><b data-page-node-id="7wcSbEIKylauW1mzMVUl87">⑤ 拨动开关开孔形状</b> —— 只是把开孔轮廓改掉。</p>
+      <p data-page-node-id="BRcWT8l8ZHfys24WKE231L"><b data-page-node-id="TBpy8fm1anEMzdjzHEgLQ6">⑥ 金属按钮螺纹段长度</b> —— 只影响垫圈厚度。</p>
+      <p data-page-node-id="Le1heVspFp0H69mzwmSSRO"><b data-page-node-id="hwOCyGWuFCoXsnKOXFzIeK">⑦ DC 座螺纹外径</b> —— 开孔 Ø12 基本不会差，量一下确认即可。</p>
+      <p data-page-node-id="4zYBBUY9KZuxxauJx2iWtD"><b data-page-node-id="ep3xk9opC4kZ30CU72BrUm">⑧ 喇叭总高（含磁钢）</b> —— 若比 35 大，声学腔深度跟着减，容积重算。</p>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
