@@ -25,6 +25,12 @@
 07_Day1测量作业单.html
 *tmp_*.html
 
+# ── CAD / CAM 的日志与自动恢复文件 ──
+# SolidWorks 会在工作目录里丢插件日志和自动恢复文件，它们不是设计数据
+*.log
+*.swar
+~$*
+
 # ── 操作系统 / 编辑器 ──
 .DS_Store
 Thumbs.db
