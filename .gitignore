@@ -13,9 +13,13 @@
 
 # ── 外观探索过程稿 ──
 # 21 版迭代渲染，其中只有 1 版是定稿。
-# 定稿已归档为 docs/images/hero.jpg，过程稿留在本地。
+# 定稿已归档为 docs/images/hero.jpg，过程稿一律留在本地、不进仓库。
+# 教训：2026-10-03 曾误把 22 张渲染（约 20 MB）塞进提交，已重写历史剔除，
+#       此处按「整个目录 + 两种前缀」双重堵住，避免重犯。
 02_概念图/
+prototype_images/
 /Minimalist_industrial_design_p_*.png
+/Industrial_design_concept_rend_*.png
 
 # ── 课程材料与个人计划（非项目成果）──
 # 作业要求是老师发的材料；实施计划与作业单是本项目的时间安排，
