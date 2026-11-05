@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Learned Duck · 台面接线手把手</title>
+<title>Learned Duck · 基础版接线手把手</title>
 <style>
   :root{
     --ink:#1b1d21; --sub:#5b6068; --line:#e2ded6; --bg:#f6f3ec; --card:#fffdf8;
@@ -41,7 +41,6 @@
   .solder{display:flex;gap:6px;align-items:center;font-family:var(--mono);font-size:14px;
     background:#efe9dd;padding:8px 12px;border-radius:5px;margin:10px 0;flex-wrap:wrap}
   .legend{font-size:13px;color:var(--sub);margin-top:6px}
-  hr{border:none;border-top:1px dashed var(--line);margin:32px 0}
   .footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--sub)}
 </style>
 </head>
@@ -49,248 +48,189 @@
 <div class="wrap">
 
 <header>
-  <h1>台面接线 · 手把手</h1>
-  <div class="sub">Learned Duck 单喇叭版 · 依据 <code>docs/17_电路系统设计与接线.md</code> · 2026-10-03</div>
+  <h1>基础版接线 · 手把手</h1>
+  <div class="sub">Learned Duck 头单体版 · 四样硬件 · 五根线 · 零代码 · 2026-11-05</div>
 </header>
 
+<div class="box note">
+  <b>本版已砍掉进阶功能</b>
+  <p style="margin:6px 0 0">ESP32、WS2812 灯板、降压模块、金属按钮、全部固件，都不做了。整机只剩音频链路：<b>适配器 → DC022 → 拨动开关 → 功放板 → 喇叭</b>。</p>
+</div>
+
 <div class="box stop">
-  <b>三条铁律，贯穿全程</b>
+  <b>三条铁律</b>
   <ol style="margin-bottom:0">
-    <li><b>断电再动手</b>。插拔任何线之前，12V 适配器先拔掉。带电插拔最容易烧端子。</li>
-    <li><b>不凭线色判极性</b>。红不一定是正、黑不一定是负。<b>万用表量过再接</b>。</li>
-    <li><b>功率件先测电压再接负载</b>。功放、降压模块这类板子，通电后先量输出对不对，对了才往上挂喇叭 / ESP。</li>
+    <li><b>断电再动手</b>。插拔任何线之前，12V 适配器先拔掉。</li>
+    <li><b>不凭线色判极性</b>。用万用表量过再接。</li>
+    <li><b>先量电压，再接负载</b>。适配器读数不对，什么都不许接。</li>
   </ol>
 </div>
 
-<h2>0 · 开工前的桌面 <span class="st">先把这堆东西摆齐再动手</span></h2>
+<h2>0 · 桌上要有的东西</h2>
 
 <div class="card">
-<h3 style="margin-top:0">工具</h3>
-<ul>
-  <li><b>万用表（必须有）</b> —— 本手册每一步都靠它判生死，没它就是盲接</li>
-  <li>电烙铁 + 焊台、斜嘴钳、镊子、热缩管、绝缘胶带</li>
-  <li>手机（当蓝牙音源）</li>
-</ul>
-<h3>零件</h3>
+<h3 style="margin-top:0">硬件</h3>
 <table>
-<tr><th>件</th><th>规格</th><th>备注</th></tr>
-<tr><td>电源适配器</td><td class="num">12V / 3A</td><td>⚠️ 不在采购清单里，必须自备或补购。2A 太紧，别赌</td></tr>
-<tr><td>蓝牙功放板</td><td>10/15/20W 立体声，12V 输入</td><td>板载蓝牙接收，手机直连它</td></tr>
-<tr><td>喇叭</td><td class="num">4Ω 10W · 2 寸全频</td><td>只有一只（单声道）</td></tr>
-<tr><td>DC-DC 降压模块</td><td class="num">22.3×17 · 7–26V→5V · 峰值 3A / 持续 1.6A</td><td>mini 邮票孔</td></tr>
-<tr><td>主控</td><td>ESP32-C3-Zero</td><td class="num">23.5×18</td></tr>
-<tr><td>灯板</td><td>WS2812B 5×5 5050</td><td>带 IN / OUT 双接口</td></tr>
-<tr><td>电阻</td><td class="num">330Ω 1/4W</td><td>串在 DIN 上，几毛钱</td></tr>
-<tr><td>线</td><td class="num">20AWG 硅胶 红/黑</td><td>只用于 12V 总线 4 根；其余 24AWG 跳线够用</td></tr>
+<tr><th>件</th><th>规格</th><th>状态</th></tr>
+<tr><td>电源适配器</td><td class="num">12V / 3A · DC 5.5×2.1 · 中心正</td><td>已购</td></tr>
+<tr><td>蓝牙功放板</td><td>20W 立体声，12V 输入</td><td>已有</td></tr>
+<tr><td>喇叭</td><td class="num">4Ω 10W · 2 寸全频</td><td>已有，只有一只</td></tr>
+<tr><td>DC022</td><td>开孔 Ø12</td><td>已有</td></tr>
+<tr><td>拨动开关</td><td>SS12F15V</td><td>已有</td></tr>
 </table>
-<p class="legend">还没买齐也不要停——阶段一只要 <b>适配器 + 功放 + 喇叭</b> 三样就能开工。</p>
+<h3>工具</h3>
+<ul>
+  <li><b>万用表</b>，每一步都靠它判断</li>
+  <li>电烙铁 + 焊锡 + 助焊剂</li>
+  <li>斜嘴钳、剥线钳、热缩管</li>
+</ul>
 </div>
 
-<h2>阶段 1 · 功放链路 <span class="st">今晚必做 · 只出声音就算过</span></h2>
+<h2>阶段 A · 台面出声 <span class="st">不需要壳，只验音频链路</span></h2>
 
-<p>这是整套里最难的一段。台面上做，<b>不装进任何壳</b>。</p>
-
-<h3>步骤 0 · 目检并拍照</h3>
-<p>把功放板翻过来看清楚每个端子的<b>丝印</b>，拍照存着。典型丝印：</p>
-<div class="solder">12V+ &nbsp;｜&nbsp; GND &nbsp;｜&nbsp; OUT L+ &nbsp; OUT L- &nbsp;｜&nbsp; OUT R+ &nbsp; OUT R-
-  <span style="color:#6b6660">（有些板子写 V+ / V- / L / R，按实际丝印认，别照抄）</span></div>
-<p class="legend">顺便看两件事：① 有没有 <b>AUX / 3.5mm</b> 口 ② 有没有 <b>安装孔</b>（关系到身壳里它是拧的还是粘的）。</p>
-
-<h3>步骤 1 · 量适配器空载</h3>
+<h3>A1 · 量适配器空载电压</h3>
 <ul>
-  <li>万用表打 <b>直流电压 20V 档</b>，表笔插 <span class="num">V+ / COM</span>。</li>
-  <li>黑笔接适配器输出<b>外圈</b>，红笔接<b>中心针</b>（DC 公母座）。</li>
-  <li>读数应在 <span class="num">12.0 ~ 13.5 V</span>。</li>
+  <li>万用表打 <b>直流 20V 档</b>（DCV）。黑笔插 COM，红笔插 V。</li>
+  <li>适配器插电，<b>插头不接任何东西</b>。</li>
+  <li>黑笔碰插头<b>外圈金属</b>，红笔伸进<b>中心孔</b>。</li>
 </ul>
-<div class="box stop"><b>停手点</b>：低于 11 V 或高于 14 V —— 别接板子，先查适配器。</div>
+<div class="box warm"><b>操作提示</b>：DC 插头的中心孔很细，表笔伸不进去，可以用一根回形针或剥了皮的细导线插进去当探针。</div>
+<div class="box go"><b>通过判据</b>：读数 <span class="num">12.0 ~ 13.5 V</span>。</div>
+<div class="box stop"><b>停手点</b>：低于 11 V、高于 14 V，或读数在 0 附近跳动。别接板子，先查适配器或表笔接触。</div>
 
-<h3>步骤 2 · 只给功放板供电，先不挂喇叭</h3>
-<div class="solder">适配器 <span style="color:#6b6660">+</span> &nbsp;→&nbsp; 功放 <span class="num">12V+</span><br>
-适配器 <span style="color:#6b6660">−</span> &nbsp;→&nbsp; 功放 <span class="num">GND</span></div>
+<h3>A2 · 只给功放板供电</h3>
+<div class="solder">适配器 + → 功放 <span class="num">12V+</span><br>适配器 − → 功放 <span class="num">GND</span></div>
 <ul>
-  <li>通电，万用表并到功放板 <b>12V+ 与 GND</b> 之间，量电压。</li>
-  <li>读数应与步骤 1 基本一致（差 0.2 V 内）。</li>
-  <li>板子若有指示灯，此时应亮。</li>
+  <li>通电，万用表量板上 <b>12V+ 与 GND</b> 之间的电压。</li>
+  <li>读数应与 A1 相差 0.2 V 以内。板载指示灯应亮。</li>
 </ul>
-<div class="box stop"><b>停手点</b>：板上读数明显低于适配器输出（压降大 = 板子可能已经短路）；或闻到焦味 / 异常发热 → 立刻断电，别再加喇叭试。</div>
+<div class="box stop"><b>停手点</b>：板上电压明显低于适配器读数（压降大，板子可能已短路），或发热、有味。立刻断电。</div>
 
-<h3>步骤 3 · 接喇叭</h3>
-<div class="solder">功放 <span class="num">OUT L+</span> &nbsp;→&nbsp; 喇叭 <b>一端</b><br>
-功放 <span class="num">OUT L-</span> &nbsp;→&nbsp; 喇叭 <b>另一端</b></div>
+<h3>A3 · 接喇叭</h3>
+<div class="solder">功放 <span class="num">OUT L+</span> → 喇叭 一端<br>功放 <span class="num">OUT L−</span> → 喇叭 另一端</div>
 <div class="box stop">
-  <b>只接 OUT L 一路。</b> OUT R 就那么悬着。
-  <p style="margin:6px 0 0">两块输出并到<b>同一只 4Ω</b> 喇叭上 = 4Ω∥4Ω = <b>2Ω</b>，负载阻抗掉一半，功放过流保护甚至烧板。想双声道就得配两只喇叭。</p>
+  <b>只接 OUT L，OUT R 悬空。</b>
+  <p style="margin:6px 0 0">两路并接同一只 4Ω 喇叭，等效 2Ω，功放过流保护动作，严重时烧板。</p>
 </div>
 <ul>
-  <li><b>喇叭必须架起来悬空</b>（垫两支笔、或放在空盒子上）。趴桌面上振膜贴桌面，会闷、会跟着桌面共振。</li>
-  <li>引线用 24AWG 跳线即可，短线，别留一大坨垂着。</li>
+  <li>喇叭<b>架起来悬空</b>，垫两支笔或放在空盒上。趴在桌面会闷、会跟着桌子共振。</li>
+  <li>接线用 24AWG 跳线即可，短线，别留一坨垂着。</li>
 </ul>
 
-<h3>步骤 4 · 通电出声</h3>
+<h3>A4 · 出声</h3>
 <ol>
-  <li>接好喇叭后<strong>最后</strong>再通电。</li>
-  <li>手机开蓝牙搜设备 → 连名字像 <code>XY-xxxx</code> / <code>BT-……</code> 的那一个
-      <span class="legend">（<b>不是</b> ESP32，ESP32 现在是裸板根本不广播）</span></li>
-  <li>连上后<strong>先别放歌</strong>，把手机音量调到 20。</li>
-  <li>放歌，音量旋钮<strong>从最小往慢慢推</strong>。</li>
-  <li>听到声音 = 音频链路闭环 ✅</li>
+  <li>接好喇叭后<b>最后</b>通电。</li>
+  <li>手机搜蓝牙，连名字像 <code>XY-xxxx</code> 或 <code>BT-……</code> 的那一个。</li>
+  <li>连上后先别放歌，手机音量调到 20。</li>
+  <li>放歌，板载音量旋钮<b>从最小往慢推</b>。</li>
 </ol>
-<div class="box go"><b>完成判据</b>：手机能连上并出声，且没有明显嗡声/滋滋声。</div>
+<div class="box go"><b>完成判据</b>：能连上、能出声、无明显嗡声。</div>
 
 <div class="card">
-<h4 style="margin:0 0 8px">没声音？按这个顺序排，别乱拆</h4>
+<h4 style="margin:0 0 8px">没声音，按顺序查</h4>
 <table>
 <tr><th>顺序</th><th>查什么</th><th>怎么查</th></tr>
-<tr><td>1</td><td>12V 有没有到板子上</td><td>万用表量板上 12V+↔GND（步骤 2 复测）</td></tr>
-<tr><td>2</td><td>蓝牙连上了吗</td><td>手机蓝牙列表里设备名在不在、状态是不是已连接</td></tr>
-<tr><td>3</td><td>喇叭线接对了吗</td><td>OUT L 的 +/− 有没有接反（接反只是相位反，不至于没声，重点是别接到 OUT R）</td></tr>
-<tr><td>4</td><td>音量</td><td>板载旋钮是不是最小、手机音量是不是太小</td></tr>
-<tr><td>5</td><td>喇叭本身</td><td>直接给喇叭接 12V 直流试一下（⚡短时间、低音量）：有"啪啪"声说明喇叭是好的</td></tr>
+<tr><td>1</td><td>12V 到板上了吗</td><td>重测 A2</td></tr>
+<tr><td>2</td><td>蓝牙连上了吗</td><td>手机蓝牙列表状态是否显示已连接</td></tr>
+<tr><td>3</td><td>喇叭接的是 OUT L 吗</td><td>确认没有接到 OUT R</td></tr>
+<tr><td>4</td><td>音量</td><td>板载旋钮、手机音量都调到中间</td></tr>
+<tr><td>5</td><td>喇叭本身</td><td>用万用表量喇叭两端，应有约 4Ω 直流电阻</td></tr>
 </table>
 </div>
 
-<label class="cb"><input type="checkbox"><span><b>阶段 1 完成</b>：适配器空载 ____ V ／ 板上 ____ V ／ 蓝牙已连 ／ 喇叭出声 □</span></label>
+<label class="cb"><input type="checkbox"><span><b>阶段 A 完成</b>：空载 <span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;V</span> ／ 板上 <span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;V</span> ／ 喇叭出声 □</span></label>
 
-<h2>阶段 2 · 降压模块单测 <span class="st">不接任何负载，先看它对不对</span></h2>
+<h2>阶段 B · 装进壳 <span class="st">焊接口座，固定功放，合盖</span></h2>
 
-<div class="box warm"><b>这一步的判据只有一条：输出 5.0 ~ 5.3 V。</b>量不到或明显偏离，就<b>不要</b>往 ESP32 / 灯板上接——那两块板子没有反接保护，接错电压直接烧。</div>
+<div class="box warm">
+  <b>顺序反过来做会返工</b>
+  <p style="margin:6px 0 0">后盖一旦合上，喇叭的四颗螺丝和外罩全在内部。所以必须先把后盖上的件装齐、焊好、通电验证，最后才合盖。</p>
+</div>
 
-<h3>先认清两个焊盘</h3>
-<p>这类 mini 降压模块通常只有 <b>2 个邮票孔</b>，但丝印各不相同。以实物为准：</p>
-<table>
-<tr><th>丝印长这样</th><th>含义</th><th>接法</th></tr>
-<tr><td><code>IN+ / IN-</code> 或 <code>VIN + / VIN -</code></td><td>标了输入输出两对</td><td>进 12V，出 5V，别接反</td></tr>
-<tr><td><code>V+ / G</code> 或 <code>VCC / GND</code></td><td>只标一个电压</td><td>⚠️ 必须看背面丝印 / 卖家说明，<b>不确定就查电压</b></td></tr>
-</table>
-<p><b>万用表怎么分辨：</b>输入侧应该对 <b>12V 正极</b>呈二极管态（0.4~0.6 V 压降）；输出侧对 5V 也是二极管态。用二极管档量两组，能区分出哪对是输入。</p>
-
-<h3>步骤</h3>
-<ol>
-  <li>断电接线：<code>IN+ ← 12V+</code>、<code>IN- ← GND</code>。</li>
-  <li>通电，<b>空载</b>量输出 <span class="num">OUT+ ↔ OUT-</span>。</li>
-  <li>读数 <span class="num">5.0 ~ 5.3 V</span> → 这块模块是好的。</li>
-</ol>
-<div class="box stop"><b>停手点</b>：输出 &gt; 5.5 V（会烧 ESP32 / 灯板）、&lt; 4.8 V（带不动灯）、或输出 0 V（模块坏了或接反了）。</div>
-
-<label class="cb"><input type="checkbox"><span><b>阶段 2 完成</b>：空载输出 <span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;V</span> ／ 判据 5.0–5.3 通过 □</span></label>
-
-<h2>阶段 3 · 先让灯亮 <span class="st">绕开降压，用 USB-C 跑通固件</span></h2>
-
-<div class="box note"><b>为什么先这么绕？</b>降压模块单独测过了、ESP 也能单独跑，把两件难事<b>拆成两半</b>排风险。等两边都过了，再合到一起 —— 一起上电出问题，你根本不知道是谁的锅。</div>
-
-<h3>硬件连线</h3>
-<div class="solder">ESP32 <span class="num">GPIO4</span> &nbsp;──[<span class="num">330Ω</span>]──&nbsp; 灯板 <span class="num">DIN</span><br>
-ESP32 <span class="num">5V / VCC</span> &nbsp;──&nbsp; 灯板 <span class="num">VCC</span>（或 5V）<br>
-ESP32 <span class="num">GND</span> &nbsp;──&nbsp; 灯板 <span class="num">GND</span></div>
+<h3>B1 · 装 DC022 与拨动开关</h3>
 <ul>
-  <li>ESP32 用 <b>USB-C 数据线</b>接电脑供电，<b>不要</b>用板上 3V3 给灯供电（3.3V 带不动，且 WS2812 亮度会塌）。</li>
-  <li><b>330Ω 电阻焊在 GPIO4 → DIN 这段的中间</b>，离灯板 DIN 焊盘 5~10 mm。它是给信号线上冲的，不是随便挂上去。</li>
-  <li>灯板如果有两块（5×5），第一块 <code>OUT</code> 接第二块 <code>IN</code>，串成一条链。</li>
+  <li>DC022 装后盖下方，靠近底边。拧紧时<b>先用手拧到贴合，再用扳手加半圈</b>，塑料件拧过头会裂。</li>
+  <li>拨动开关装在后盖的<b>接近平面</b>区域，不要选曲面。曲面开方孔，一侧咬不住、一侧顶出来，装上去是歪的。</li>
 </ul>
 
-<h3>固件（Arduino IDE）</h3>
-<ol>
-  <li>开发板管理器搜 <code>esp32</code>，安装 <b>Espressif Systems</b> 的包。</li>
-  <li>开发板选 <b>ESP32C3 Dev Module</b>。</li>
-  <li>库管理器搜 <code>Adafruit NeoPixel</code>（或 FastLED），装一个。</li>
-  <li>先跑<b>板载示例</b>（File → Examples → Adafruit NeoPixel → <code>NeoPixel simplest</code>）验证通路，再写自己的。</li>
-</ol>
-<p><b>亮度上限：<span class="num">180 / 255</span></b>。头顶方案只点中间一行 10 颗，电流 0.42 A，对降压 1.6 A 持续限还有 3 倍余量，可以放开。</p>
-<div class="box go"><b>完成判据</b>：灯板亮起 10 颗（头顶那排），颜色是你设的，不乱闪。</div>
-
-<label class="cb"><input type="checkbox"><span><b>阶段 3 完成</b>：__ 颗亮 ／ 亮度设 <span class="fill">&nbsp;&nbsp;</span>／255 ／ 颜色正常 □</span></label>
-
-<h2>阶段 4 · 合并到 5V 系统 <span class="st">降压替代 USB，双件合一</span></h2>
-
-<div class="box warm"><b>必须先拔掉 USB-C</b>，否则两路 5V 顶在一起。</div>
-<div class="solder">降压 <span class="num">OUT+</span> &nbsp;──&nbsp; 灯板 <span class="num">VCC</span> &nbsp;<span style="color:#6b6660">（单独一路 24AWG，不与 ESP 共用）</span><br>
-降压 <span class="num">OUT+</span> &nbsp;──&nbsp; ESP32 <span class="num">5V / VCC</span><br>
-降压 <span class="num">OUT−</span> &nbsp;──&nbsp; 灯板 <span class="num">GND</span><br>
-降压 <span class="num">OUT−</span> &nbsp;──&nbsp; ESP32 <span class="num">GND</span></div>
+<h3>B2 · 量 DC022 极性（第二次，装好后）</h3>
+<p>装好的座子接线端子朝内，直接量端子更方便：</p>
 <ul>
-  <li>5V 侧只需确认：降压的 OUT− 和 IN− 在模块内部本来是通的（非隔离 DC-DC），所以 <b>12V 地和 5V 地自动共地</b>，不用额外跨接。</li>
-  <li>上电顺序：先看降压输出对不对 → 再看 ESP 电源灯 → 最后看灯。</li>
+  <li>适配器插头插进座子，<b>不接其他任何线</b>。</li>
+  <li>万用表量座子背面的两个焊片：红笔接<b>中心针对应的焊片</b>，黑笔接<b>外壳对应的焊片</b>。</li>
+  <li>读数为正，说明中心是正极。</li>
 </ul>
-<div class="box go"><b>完成判据</b>：拔掉 USB 后，灯仍然正常亮（说明 5V 真的由降压供上了）。</div>
+<div class="box stop"><b>停手点</b>：读数为负，说明极性反了。绝不能接功放，换座子或改接线。</div>
 
-<label class="cb"><input type="checkbox"><span><b>阶段 4 完成</b>：拔 USB 后灯仍亮 □</span></label>
-
-<h2>阶段 5 · 12V 总线 + 全机台面联调 <span class="st">把开关和 DC 座加进来</span></h2>
-
-<h3>5.1 先搞清楚 DC022 的极性</h3>
-<p>DC 座是「中心针 + 外壳圈」。<b>多数是中心正、外壳负</b>，但也有反的。</p>
-<ul>
-  <li>把适配器插头插进 DC 座（<b>不接任何其他线</b>），万用表量：<b>中心针 ↔ 外壳圈</b>。</li>
-  <li>黑笔接外壳、红笔接中心，<b>读数为正</b> → 中心是正极。</li>
-</ul>
-<div class="box stop"><b>停手点</b>：接反直接给功放板灌反电压。<b>量完再往下走</b>，这一步不许跳。</div>
-
-<h3>5.2 接线表（照着焊）</h3>
+<h3>B3 · 焊五根线</h3>
 <table>
 <tr><th>#</th><th>从</th><th>到</th><th>线</th></tr>
-<tr><td>1</td><td>DC022 中心针（+）</td><td>拨动开关 脚1</td><td class="num">20AWG</td></tr>
-<tr><td>2</td><td>开关 脚2</td><td>功放 12V+</td><td class="num">20AWG</td></tr>
-<tr><td>3</td><td>开关 脚2 <span style="color:#6b6660">（同点分叉）</span></td><td>降压 IN+</td><td class="num">20AWG</td></tr>
-<tr><td>4</td><td>DC022 外壳（−）</td><td>功放 GND / 降压 IN− / 开关 脚3 <b>（同一点）</b></td><td class="num">20AWG</td></tr>
-<tr><td>5</td><td>功放 OUT L</td><td>喇叭</td><td>24AWG 可</td></tr>
-<tr><td>6</td><td>功放 OUT R</td><td><b>不接，悬空</b></td><td>—</td></tr>
-<tr><td>7</td><td>降压 OUT 5V</td><td>ESP 5V ／ 灯板 VCC（分两路）</td><td>24AWG</td></tr>
-<tr><td>8</td><td>降压 OUT GND</td><td>ESP GND ／ 灯板 GND</td><td>24AWG</td></tr>
-<tr><td>9</td><td>ESP GPIO4 ——[330Ω]——</td><td>灯板 DIN</td><td>22AWG 软线</td></tr>
-</table>
-<div class="box note"><b>开关装在哪</b>：串在 <b>12V 总线最前端</b>，不是串在灯支路。关掉它 = 全机断电（含功放），这是"电源总开关"该有的行为。SS12F15V 是单刀双掷，你只当<b>单刀单掷</b>用：脚1 进、脚2 出、脚3 悬空。</div>
-
-<h3>5.3 联调判据（一次全通）</h3>
-<label class="cb"><input type="checkbox"><span>拨动开关 <b>关</b> → 功放、ESP、灯全部断电</span></label>
-<label class="cb"><input type="checkbox"><span>拨动开关 <b>开</b> → 功放板亮起，可连蓝牙出声</span></label>
-<label class="cb"><input type="checkbox"><span>灯随音乐跳（音乐从功放播，灯是 ESP 自己跑律动，两件事都要成立）</span></label>
-<label class="cb"><input type="checkbox"><span>触摸金属按钮 → 灯切模式（阶段 5 可不做，固件里加）</span></label>
-
-<h2>故障速查表 <span class="st">按症状查，别乱拆</span></h2>
-<table>
-<tr><th>症状</th><th>最可能的原因</th><th>先查这里</th></tr>
-<tr><td>功放完全没反应</td><td>12V 没送到板上</td><td>DC 座极性、开关接线、板上电压</td></tr>
-<tr><td>有"滋滋"电流声、喇叭发闷</td><td>① 喇叭正负接反 ② 12V 线压降过大（24AWG 顶 2A） ③ 电源本身电流不够</td><td>先查喇叭相位，再确认 12V 主线是不是 20AWG</td></tr>
-<tr><td>降压输出 0 V</td><td>接反了 / 模块坏了 / 输入没到</td><td>二极管档分输入输出，量 IN 侧有没有 12V</td></tr>
-<tr><td>降压输出偏高 &gt; 5.5 V</td><td>模块是"可调型"，出厂没调准</td><td><b>立刻停止</b>，用小螺丝刀调反馈电位器到 5.0~5.2 V，再接负载</td></tr>
-<tr><td>灯一颗都不亮</td><td>① 没共地 ② 330Ω 焊错位置 ③ 固件没烧</td><td>万用表量灯板 VCC↔GND 有没有 5V</td></tr>
-<tr><td>灯乱闪 / 颜色乱</td><td>数据线太长或没串联阻；GND 走了长路</td><td>DIN→GPIO4 线缩短到 20 cm 内；330Ω 必须有</td></tr>
-<tr><td>ESP 反复重启</td><td>5V 供不稳 / 供电线太细</td><td>量 ESP 5V 脚电压，跌到 4.6 V 以下就不行</td></tr>
-<tr><td>手机搜到两个蓝牙</td><td>ESP32 烧了带蓝牙的程序</td><td>方案 A 就<b>不烧</b>蓝牙程序；或把名字改成 <code>LD-LAMP</code> 明确不是音箱</td></tr>
+<tr><td>1</td><td>DC022 中心针焊片</td><td>开关 脚 1</td><td class="num">20AWG 红</td></tr>
+<tr><td>2</td><td>开关 脚 2</td><td>功放 12V+</td><td class="num">20AWG 红</td></tr>
+<tr><td>3</td><td>DC022 外壳焊片</td><td>功放 GND，同时接开关 脚 3</td><td class="num">20AWG 黑</td></tr>
+<tr><td>4</td><td>功放 OUT L+</td><td>喇叭 正端</td><td>24AWG</td></tr>
+<tr><td>5</td><td>功放 OUT L−</td><td>喇叭 负端</td><td>24AWG</td></tr>
 </table>
 
-<h2>焊与安全 · 十条红线</h2>
+<h3>B4 · 功放板固定</h3>
 <ol>
-  <li>烙铁温度 <span class="num">320~350 ℃</span>，焊 2~3 秒就把烙铁移开，靠锡流动，<b>不要按着不动</b>。</li>
-  <li>每个焊点都要<b>有光亮的锡润湿</b>，哑淡的锡球是虚焊，会接触不良。</li>
-  <li>焊完<b>先不插电</b>，用放大镜/手机镜头看一遍每个焊点有没有连锡（短路）。</li>
-  <li>裸露线头一律<b>热缩管或绝缘胶带包死</b>。短路 3 秒就能烧板。</li>
-  <li>通电时手不要在板上悬着，尤其是降压模块发热区。</li>
-  <li>降压模块、功放板<b>不能长时间满载 2A</b>，台面测试阶段音量别开满、别连着听几小时。</li>
-  <li>12V 总线全程用 <span class="num">20AWG</span>，清单里那批 24AWG 只给 5V / 信号用。</li>
-  <li>喇叭线悬空架好，别贴桌面。</li>
-  <li>调试期间别接金属桌面的螺丝刀一起碰两块板 —— 随手一碰就短路。</li>
-  <li>第一次上电请 <b>有人在旁边</b>，闻味不对立刻断电。</li>
+  <li>板背面贴一层电工胶带或 Kapton 胶带，盖住焊点。</li>
+  <li>凸台上贴 3M 9448A 双面胶，板子按上去，压 10 秒。</li>
+  <li>板与凸台之间垫一片导热硅胶垫。</li>
+  <li>线束每 30 mm 点一小坨热熔胶固定在壳壁。</li>
+</ol>
+<div class="box stop"><b>红线</b>：任何金属件（螺丝头、配重钢板、散热片）不能接触裸板。短路三秒就烧板。</div>
+
+<h3>B5 · 合盖前的复测</h3>
+<label class="cb"><input type="checkbox"><span>拨动开关<b>关</b>，功放板指示灯灭；<b>开</b>，灯亮</span></label>
+<label class="cb"><input type="checkbox"><span>蓝牙能连，放歌有声音</span></label>
+<label class="cb"><input type="checkbox"><span>喇叭线与 12V 线没有互相压住，也不会被后盖压到</span></label>
+<label class="cb"><input type="checkbox"><span>配重钢板已固定，不会在里面滑动</span></label>
+
+<div class="box go"><b>四项全勾，才能合盖。</b></div>
+
+<h3>B6 · 合盖与整机复测</h3>
+<ol>
+  <li>后盖对准，先手动拧四颗螺丝到贴合，再逐个加力，不要一次拧死一颗。</li>
+  <li>通电，开关测试，蓝牙测试，最大音量听 30 秒。</li>
+  <li>听有没有壳振（某些频率下塑料件共振发出嗡嗡声）。有的话，在后盖内壁贴一片泡棉。</li>
 </ol>
 
-<h2>记录表 <span class="st">填了才算做完，贴进 README 当调试日志</span></h2>
+<h2>故障速查</h2>
 <table>
-<tr><th>阶段</th><th>实测值 / 结果</th><th>日期</th></tr>
-<tr><td>适配器空载电压</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>功放板上 12V</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>降压输出（空载）</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>降压输出（带灯）</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>ESP 5V 脚（静态）</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>DC022 中心针极性</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正 / 负</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
-<tr><td>灯亮颗数 / 亮度</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span> 颗 / <span class="fill">&nbsp;&nbsp;&nbsp;</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
+<tr><th>症状</th><th>最可能原因</th><th>先查这里</th></tr>
+<tr><td>功放完全没反应</td><td>12V 没送到板上</td><td>DC022 极性、开关接线、板上电压</td></tr>
+<tr><td>有滋滋声，声音发闷</td><td>喇叭正负接反，或 12V 线太细压降大</td><td>交换喇叭两根线；确认 12V 主线是 20AWG</td></tr>
+<tr><td>音量一大就破音</td><td>适配器电流不足</td><td>确认是 3A，不是 2A 或 1.5A</td></tr>
+<tr><td>开关拨了没反应</td><td>开关接的是脚 1 和脚 3</td><td>量脚 1 与脚 2 通断</td></tr>
+<tr><td>播放时有壳振嗡嗡声</td><td>塑料件共振</td><td>后盖内壁贴泡棉，螺丝加力</td></tr>
+</table>
+
+<h2>焊接与安全</h2>
+<ol>
+  <li>烙铁 <span class="num">320~350 ℃</span>，焊 2 至 3 秒移开，不要按着不动。</li>
+  <li>焊点要光亮润湿，哑淡的锡球是虚焊。</li>
+  <li>焊完先不插电，用手机镜头看一遍有没有连锡短路。</li>
+  <li>裸露线头一律热缩管或绝缘胶带包死。</li>
+  <li>DC022 焊片很窄，焊完拉扯一下确认不假焊。这是整机唯一会被反复插拔的受力点。</li>
+  <li>通电时手不要悬在板上。</li>
+  <li>调试期间别让螺丝刀同时碰两块金属。</li>
+</ol>
+
+<h2>记录表</h2>
+<table>
+<tr><th>项</th><th>实测</th><th>日期</th></tr>
+<tr><td>适配器空载电压</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
+<tr><td>功放板上 12V</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
+<tr><td>喇叭直流电阻</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ω</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
+<tr><td>DC022 中心针极性</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正 / 负</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
+<tr><td>合盖后是否壳振</td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;是 / 否</span></td><td><span class="fill">&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>
 <tr><td>异常现象</td><td colspan="2"><span class="fill" style="min-width:70%">&nbsp;</span></td></tr>
 </table>
 
 <div class="footer">
-参考：<code>docs/17_电路系统设计与接线.md</code>（拓扑 / 电流预算 / 颈内空间账）·
-<code>docs/12_灯板安装.md</code>（灯板方向与固定）·
-<code>docs/16_顶盖灯箱方案.md</code>（头顶单行 10 颗）<br>
-最后更新 2026-10-03 · 本页只讲「桌上怎么接」，壳体走线见 docs/17 §3
+配套文档：<code>docs/17_电路系统设计与接线.md</code>（拓扑、电流、装配顺序）<br>
+本页只讲桌上怎么接。壳内布局见 docs/17 第 3 节与第 5 节。
 </div>
 
 </div>
