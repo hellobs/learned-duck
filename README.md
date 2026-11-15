@@ -8,6 +8,10 @@
 
 《计算机辅助工业设计》课程作业
 
+<br>
+
+<img src="docs/images/hero.png" width="420" alt="Learned Duck 桌面蓝牙音箱">
+
 
 ## 许可
 
