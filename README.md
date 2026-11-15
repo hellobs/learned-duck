@@ -2,9 +2,7 @@
 
 # Learned Duck
 
-**一台「被训练出来」的桌面蓝牙音箱**
-
-*a desktop speaker that is **learned, not designed***
+**致敬强化学习 Microduck 的桌面蓝牙音箱**
 
 《计算机辅助工业设计》课程作业
 
