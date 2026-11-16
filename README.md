@@ -6,10 +6,62 @@
 
 《计算机辅助工业设计》课程作业
 
-<br>
+<img src="docs/images/hero.png" width="440" alt="Learned Duck 桌面蓝牙音箱">
 
-<img src="docs/images/hero.png" width="420" alt="Learned Duck 桌面蓝牙音箱">
+</div>
 
+## Background
+
+桌面音箱不在「会学习的机器」这场对话里。它们一直是模具压出来的壳，里面装一只喇叭。
+
+> Desktop speakers never entered the conversation about machines that learn.
+> They are moulded shells with a driver inside.
+
+## Definition
+
+动手之前，先给方案划下七个约束：
+
+`电源` · `蓝牙` · `出声` · `摆放稳定` · `桌面尺度` · `情感` · `可拆装`
+
+## Idea
+
+从箱体开始推演形体。下面是早期的形态草图——喇叭放在正面还是侧面、出音口开多大、定位孔落在哪，都在这一页上翻来覆去。
+
+<img src="docs/images/sketch.png" width="680" alt="形态推演草图">
+
+## Making
+
+五步：**结构与外观设计 → 3D 打印 → 螺母嵌入 → 结构组装 → 电路连接**。
+
+<table>
+<tr>
+<td align="center" width="20%"><img src="docs/images/make-1-design.png" width="150" alt="结构与外观设计"><br><sub>结构与外观设计</sub></td>
+<td align="center" width="20%"><img src="docs/images/make-2-print.png" width="150" alt="3D 打印"><br><sub>3D 打印</sub></td>
+<td align="center" width="20%"><img src="docs/images/make-3-nut.png" width="150" alt="螺母嵌入"><br><sub>螺母嵌入</sub></td>
+<td align="center" width="20%"><img src="docs/images/make-4-assembly.png" width="150" alt="结构组装"><br><sub>结构组装</sub></td>
+<td align="center" width="20%"><img src="docs/images/make-5-circuit.png" width="150" alt="电路连接"><br><sub>电路连接</sub></td>
+</tr>
+</table>
+
+SolidWorks 模型在 `cad/智能音箱1108/`：前壳、后盖、头盖、遮罩、喇叭、功放板、彩灯开发板，以及装配体成品。
+
+## Result
+
+<table>
+<tr>
+<td><img src="docs/images/result-1-desk.png" width="380" alt="成品实拍"></td>
+<td align="center" valign="middle">
+<img src="docs/images/result-2.png" width="170" alt="成品细节"><br>
+<img src="docs/images/result-3.png" width="170" alt="成品细节">
+</td>
+</tr>
+</table>
+
+## 关于
+
+- **作者**：张子睿 · 25 工业设计实验班
+- **课程**：《计算机辅助工业设计》课程作业记录
+- **致敬**：Microduck —— 一台步态由强化学习训练出来的桌面机器人
 
 ## 许可
 
