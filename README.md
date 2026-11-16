@@ -25,13 +25,11 @@
 
 ## Idea
 
-从箱体开始推演形体。下面是早期的形态草图——喇叭放在正面还是侧面、出音口开多大、定位孔落在哪，都在这一页上翻来覆去。
-
-<img src="docs/images/sketch.png" width="680" alt="形态推演草图">
+从箱体开始推演形体。喇叭放在正面还是侧面、出音口开多大、定位孔落在哪.
 
 ## Making
 
-五步：**结构与外观设计 → 3D 打印 → 螺母嵌入 → 结构组装 → 电路连接**。
+**结构与外观设计 → 3D 打印 → 螺母嵌入 → 结构组装 → 电路连接**。
 
 <table>
 <tr>
@@ -43,23 +41,10 @@
 </tr>
 </table>
 
-SolidWorks 模型在 `cad/智能音箱1108/`：前壳、后盖、头盖、遮罩、喇叭、功放板、彩灯开发板，以及装配体成品。
-
-## Result
-
-<table>
-<tr>
-<td><img src="docs/images/result-1-desk.png" width="380" alt="成品实拍"></td>
-<td align="center" valign="middle">
-<img src="docs/images/result-2.png" width="170" alt="成品细节"><br>
-<img src="docs/images/result-3.png" width="170" alt="成品细节">
-</td>
-</tr>
-</table>
+SolidWorks 模型在 `cad/智能音箱1108/`：前壳、后盖、头盖、遮罩、喇叭、功放板，以及装配体成品。
 
 ## 关于
 
-- **作者**：张子睿 · 25 工业设计实验班
 - **课程**：《计算机辅助工业设计》课程作业记录
 - **致敬**：Microduck —— 一台步态由强化学习训练出来的桌面机器人
 
